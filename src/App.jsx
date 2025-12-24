@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 
 // import './App.css'
 import Navbar from "./components/Navbar";
@@ -17,6 +17,7 @@ import { Login } from "./pages/Login";
 import LayoutEmp from "./pages/Employee/LayoutEmp";
 
 function App() {
+  //navbars locations
   // const isAdminPath = useLocation().pathname.startsWith("/admin");
   const isEmployeePath = useLocation().pathname.startsWith("/employee");
   const isAdminPath =
@@ -39,12 +40,14 @@ function App() {
         {/* Content wrapper */}
         <div className="flex-1">
         <Routes>
-            <Route path="/" element={<Home />} />
+            {/* <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/contact" element={<Contact />} /> */}
             <Route path="*" element={<PageNotFound />} />
-
+            <Route path="/" element={<Navigate to="/login" replace />} />
+  <Route path="/login" element={<Login />} />        
             <Route path="/login" element={<Login />} />
+            {/* <Route path="/login" element={<Login />} /> */}
             {/* ////  dash */}
             
             <Route path="/admin" element={<Layout />}>
