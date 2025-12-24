@@ -42,11 +42,11 @@ export const Login = () => {
       return;
     }
 
-    // ✅ ADMIN ONLY
-    if (role !== "admin") {
-      setError("Access denied. Admin only.");
-      return;
-    }
+    // // ✅ ADMIN ONLY
+    // if (role !== "admin" || role !== "employee") {
+    //   setError("Access denied. Admin only.");
+    //   return;
+    // }
 
     // ✅ BUILD USER OBJECT
     const user = {
@@ -61,7 +61,12 @@ export const Login = () => {
     localStorage.setItem("user", JSON.stringify(user));
 
     // ✅ REDIRECT WORKS NOW
-    navigate("/admin", { replace: true });
+    if(user.role === "admin") {
+      navigate("/admin", { replace: true });
+    } else {
+       navigate("/employee", { replace: true });
+    }
+    // navigate("/admin", { replace: true });
 
   } catch (err) {
     setError("Server error. Please try again later.");

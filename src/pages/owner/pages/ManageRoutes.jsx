@@ -278,20 +278,20 @@ export default function ManageRoutes() {
             <tbody>
               {routes.map((r) => (
                 <tr key={r._id} className="border-b">
-                  <td>{r.routeName}</td>
-                  <td>{r.driver?.name}</td>
-                  <td>{r.stops.length}</td>
-                  <td>{r.totalKm} km</td>
-                  <td>
-                    <Button size="sm" variant="outline" onClick={() => toggleActive(r._id, r.isActive)}>
+                  <td className= 'text-center'>{r.routeName}</td>
+                  <td className= 'text-center'>{r.driver?.name}</td>
+                  <td className= 'text-center'>{r.stops.length}</td>
+                  <td className= 'text-center'>{r.totalKm} km</td>
+                  <td className="text-center align-middle">
+                    <Button  size="sm" variant="outline" onClick={() => toggleActive(r._id, r.isActive)}>
                       {r.isActive ? <Eye size={16} /> : <EyeOff size={16} />}
                     </Button>
                   </td>
-                  <td className="flex gap-2">
+                  <td className="flex gap-2 justify-center items-center">
                     <Button size="sm" variant="outline" onClick={() => handleEditRoute(r)}>
                       <Pencil size={16} />
                     </Button>
-                    <MapPin size={16} className="cursor-pointer" />
+                    <MapPin size={16} className="cursor-pointer " />
                   </td>
                 </tr>
               ))}
