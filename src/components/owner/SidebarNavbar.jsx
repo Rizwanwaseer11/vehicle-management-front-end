@@ -1,12 +1,24 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import { LogOut,Bus ,House ,Route,  Users,CircleUser} from "lucide-react";
 
 const SidebarNavbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+
+const handleLogOut = () => {
+  // 1. Remove auth data
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  // 3. Redirect to login
+  navigate("/login", { replace: true });
+};
 
   return (
     <>
@@ -160,7 +172,7 @@ const SidebarNavbar = () => {
                   href="#"
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                 >
-                  <svg
+                  {/* <svg
                     className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
@@ -176,10 +188,10 @@ const SidebarNavbar = () => {
                       strokeWidth={2}
                       d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"
                     />
-                  </svg>
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Documentation
-                  </span>
+                  </svg> */}
+                  {/* <span className="flex-1 ms-3 whitespace-nowrap"> */}
+                    {/* Documentation */}
+                  {/* </span> */}
                 </a>
               </li>
               <li>
@@ -187,7 +199,7 @@ const SidebarNavbar = () => {
                   href="#"
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                 >
-                  <svg
+                  {/* <svg
                     className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
@@ -203,18 +215,18 @@ const SidebarNavbar = () => {
                       strokeWidth={2}
                       d="m13.46 8.291 3.849-3.849a1.5 1.5 0 0 1 2.122 0l.127.127a1.5 1.5 0 0 1 0 2.122l-3.84 3.838a4 4 0 0 0-2.258-2.238Zm0 0a4 4 0 0 1 2.263 2.238l3.662-3.662a8.961 8.961 0 0 1 0 10.27l-3.676-3.676m-2.25-5.17 3.678-3.676a8.961 8.961 0 0 0-10.27 0l3.662 3.662a4 4 0 0 0-2.238 2.258L4.615 6.863a8.96 8.96 0 0 0 0 10.27l3.662-3.662a4 4 0 0 0 2.258 2.238l-3.672 3.676a8.96 8.96 0 0 0 10.27 0l-3.662-3.662a4.001 4.001 0 0 0 2.238-2.262m0 0 3.849 3.848a1.5 1.5 0 0 1 0 2.122l-.127.126a1.499 1.499 0 0 1-2.122 0l-3.838-3.838a4 4 0 0 0 2.238-2.258Zm.29-1.461a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-7.718 1.471-3.84 3.838a1.5 1.5 0 0 0 0 2.122l.128.126a1.5 1.5 0 0 0 2.122 0l3.848-3.848a4 4 0 0 1-2.258-2.238Zm2.248-5.19L6.69 4.442a1.5 1.5 0 0 0-2.122 0l-.127.127a1.5 1.5 0 0 0 0 2.122l3.849 3.848a4 4 0 0 1 2.238-2.258Z"
                     />
-                  </svg>
-                  <span className="flex-1 ms-3 whitespace-nowrap">Support</span>
+                  </svg> */}
+                  {/* <span className="flex-1 ms-3 whitespace-nowrap">Support</span> */}
                 </a>
               </li>
               <li >
-                <a
-                  href="#"
+                <div                  
                   className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  
                 >
-                 <LogOut  className="text-red-600 "/>
-                  <span className="flex-1 ms-3 text-red-600 whitespace-nowrap">Log out </span>
-                </a>
+                 <LogOut  className="text-red-600 " />
+                  <span className="flex-1 ms-3 text-red-600 whitespace-nowrap cursor-pointer" onClick={handleLogOut}>Log out </span>
+                </div>
               </li>
               
             </ul>
