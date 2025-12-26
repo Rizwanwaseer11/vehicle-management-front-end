@@ -72,7 +72,7 @@ export default function ManageRoutes() {
 
   const fetchBuses = async () => {
     try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-buses", {
+      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -211,17 +211,20 @@ export default function ManageRoutes() {
                   </SelectContent>
                 </Select>
 
-                {/* BUS SELECT */}
-                <Select value={form.bus} onValueChange={(v) => setForm({ ...form, bus: v })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Assign Bus" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {buses.map((b) => (
-                      <SelectItem key={b._id} value={b._id}>{b.busNumber}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+               {/* BUS SELECT */}
+<Select value={form.bus} onValueChange={(v) => setForm({ ...form, bus: v })}>
+  <SelectTrigger>
+    <SelectValue placeholder="Assign Bus" />
+  </SelectTrigger>
+  <SelectContent>
+    {buses.map((b) => (
+      <SelectItem key={b._id} value={b._id}>
+        {b.number}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+
 
                 <Input
                   type="datetime-local"
@@ -269,6 +272,7 @@ export default function ManageRoutes() {
               <tr className="border-b">
                 <th>Route</th>
                 <th>Driver</th>
+                <th>Bus</th>
                 <th>Stops</th>
                 <th>KM</th>
                 <th>Active</th>
@@ -280,6 +284,7 @@ export default function ManageRoutes() {
                 <tr key={r._id} className="border-b">
                   <td className= 'text-center'>{r.routeName}</td>
                   <td className= 'text-center'>{r.driver?.name}</td>
+                  <td className= 'text-center'>{r.bus?.number}</td>
                   <td className= 'text-center'>{r.stops.length}</td>
                   <td className= 'text-center'>{r.totalKm} km</td>
                   <td className="text-center align-middle">
