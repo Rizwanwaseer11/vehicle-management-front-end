@@ -247,6 +247,61 @@ const QuickActions = () => {
   const [modalType, setModalType] = useState(null);
   const [open, setOpen] = useState(false);
 
+  // Ading bus model state
+  const [busNumber, setBusNumber] = useState("");
+const [busModel, setBusModel] = useState("");
+const [busSeating, setBusSeating] = useState("");
+const [busLoading, setBusLoading] = useState(false);
+
+
+//handle bus form submission
+const handleAddBus = async () => {
+  // simple validations
+  if (!busNumber.trim()) return alert("Bus number is required");
+  if (!busModel.trim()) return alert("Bus model is required");
+  if (!busSeating || busSeating <= 0) return alert("Valid seating capacity is required");
+
+  try {
+    setBusLoading(true);
+
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/createBus", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      credentials: "include", // sends cookies if backend uses cookies
+      body: JSON.stringify({
+        number: busNumber,
+        model: busModel,
+        seatingCapacity: Number(busSeating),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return alert(data.message || "Failed to add bus");
+    }
+
+    alert(data.message || "Bus added successfully");
+
+    // reset form
+    setBusNumber("");
+    setBusModel("");
+    setBusSeating("");
+    closeModal(); // closes dialog
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add bus");
+  } finally {
+    setBusLoading(false);
+  }
+};
+
+
   const openModal = (type) => {
     setModalType(type);
     setOpen(true);
@@ -296,17 +351,31 @@ const QuickActions = () => {
             <div className="space-y-4 mt-4">
               <div>
                 <Label>Bus Number</Label>
-                <Input placeholder="LHE-1234" />
+                <Input
+            placeholder="LHE-1234"
+            value={busNumber}
+            onChange={(e) => setBusNumber(e.target.value)}
+          />
               </div>
 
               <div>
                 <Label>Bus Model</Label>
-                <Input placeholder="Toyota Coaster" />
+                <Input
+            placeholder="Toyota Coaster"
+            value={busModel}
+            onChange={(e) => setBusModel(e.target.value)}
+          />
               </div>
 
               <div>
                 <Label>Seating Capacity</Label>
-                <Input type="number" placeholder="22" min="0" />
+                <Input
+            type="number"
+            placeholder="22"
+            min="0"
+            value={busSeating}
+            onChange={(e) => setBusSeating(e.target.value)}
+          />
               </div>
             </div>
           </>
@@ -407,7 +476,9 @@ const QuickActions = () => {
             <Button variant="outline" onClick={closeModal}>
               Cancel
             </Button>
-            <Button>Submit</Button>
+             <Button onClick={modalType === "bus" ? handleAddBus : null} disabled={busLoading}>
+    {busLoading ? "Saving..." : "Submit"}
+  </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -11,7 +11,7 @@ import QuickActions from "../../components/Cards/QuickActions";
  */
 const API = {
   users: "https://vehicle-management-ecru.vercel.app/api/admin/", // returns ALL users
-  activeBuses: "https://vehicle-management-ecru.vercel.app/api/buses/active",
+  activeBuses: "https://vehicle-management-ecru.vercel.app/api/buses/",
   routes: "https://vehicle-management-ecru.vercel.app/api/trips/",
   trips: "https://vehicle-management-ecru.vercel.app/api/trips",
 };
@@ -129,6 +129,7 @@ useEffect(() => {
   const totalDrivers = useMemo(() => users.filter((u) => u.role === "driver").length, [users]);
   const totalPassengers = useMemo(() => users.filter((u) => u.role === "passenger").length, [users]);
   const activeRoutes = useMemo(() => routes.filter((r) => r.isActive === true).length, [routes]);
+  const activeBus = useMemo(() => activeBuses.filter((b) => b.isActive === true).length, [activeBuses]);
 
   /**
    * ===============================
@@ -138,7 +139,7 @@ useEffect(() => {
   const stats = [
     {
       title: "Active Buses",
-      value: 12, // HARD-CODED for now
+      value: activeBus, // HARD-CODED for now
       icon: Bus,
       color: "bg-blue-500/30",
       textColor: "text-blue-500",
