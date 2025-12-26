@@ -70,7 +70,13 @@ const DashboardCards = ({ isEmployeePath }) => {
       }
       if (contentType && contentType.includes("application/json")) {
         const data = await res.json();
-        return Array.isArray(data) ? data : data.users || data.routes || data || [];
+        return  Array.isArray(data)
+  ? data
+  : data.trips   // 👈 trips FIRST
+  || data.users
+  || data.buses
+  || data.routes
+  || [];
       } else {
         console.error("Expected JSON but got HTML:", url, await res.text());
         return [];
@@ -128,7 +134,11 @@ useEffect(() => {
    */
   const totalDrivers = useMemo(() => users.filter((u) => u.role === "driver").length, [users]);
   const totalPassengers = useMemo(() => users.filter((u) => u.role === "passenger").length, [users]);
-  const activeRoutes = useMemo(() => routes.filter((r) => r.isActive === true).length, [routes]);
+  const activeRoutes = useMemo(
+  () => (Array.isArray(routes) ? routes.filter((r) => r.isActive).length : 0),
+  [routes]
+);
+
   const activeBus = useMemo(() => activeBuses.filter((b) => b.isActive === true).length, [activeBuses]);
 
   /**
