@@ -34,7 +34,7 @@ export default function ManageRoutes() {
     startTime: "",
     endTime: "",
     totalKm: "",
-    stops: [{ name: "", latitude: "", longitude: "" }],
+    stops: [{ name: "", latitude: "", longitude: "", order: 1 }],
   });
 
   /* ================= FETCH DATA ================= */
@@ -44,18 +44,25 @@ export default function ManageRoutes() {
     fetchBuses();
   }, []);
 
-  const fetchTrips = async () => {
-    try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/", {
+ const fetchTrips = async () => {
+  try {
+    const res = await fetch(
+      "https://vehicle-management-ecru.vercel.app/api/trips/",
+      {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setRoutes(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Failed to fetch trips", err);
-      setRoutes([]);
-    }
-  };
+    });
+
+    const data = await res.json();
+
+    // ✅ FIX HERE
+    setRoutes(Array.isArray(data.trips) ? data.trips : []);
+
+  } catch (err) {
+    console.error("Failed to fetch trips", err);
+    setRoutes([]);
+  }
+};
+
 
   const fetchDrivers = async () => {
     try {
@@ -87,7 +94,15 @@ export default function ManageRoutes() {
   const addStop = () => {
     setForm({
       ...form,
-      stops: [...form.stops, { name: "", latitude: "", longitude: "" }],
+      stops: [
+        ...form.stops,
+        {
+          name: "",
+          latitude: "",
+          longitude: "",
+          order: form.stops.length + 1,
+        },
+      ],
     });
   };
 
@@ -106,7 +121,11 @@ export default function ManageRoutes() {
 
     const payload = {
       ...form,
-      totalKm: Number(form.totalKm), // ensure backend receives a number
+      totalKm: Number(form.totalKm),
+      stops: form.stops.map((s) => ({
+        ...s,
+        order: Number(s.order),
+      })),
     };
 
     const url = editRoute
@@ -140,19 +159,27 @@ export default function ManageRoutes() {
       routeName: route.routeName,
       driver: route.driver?._id || route.driver || "",
       bus: route.bus?._id || route.bus || "",
-      startTime: route.startTime ? new Date(route.startTime).toISOString().slice(0, 16) : "",
-      endTime: route.endTime ? new Date(route.endTime).toISOString().slice(0, 16) : "",
+      startTime: route.startTime
+        ? new Date(route.startTime).toISOString().slice(0, 16)
+        : "",
+      endTime: route.endTime
+        ? new Date(route.endTime).toISOString().slice(0, 16)
+        : "",
       totalKm: route.totalKm || "",
       stops: route.stops.length
-        ? route.stops.map((s) => ({
-            name: s.name,
-            latitude: s.latitude,
-            longitude: s.longitude,
-          }))
-        : [{ name: "", latitude: "", longitude: "" }],
+        ? route.stops
+            .sort((a, b) => a.order - b.order)
+            .map((s, i) => ({
+              name: s.name,
+              latitude: s.latitude,
+              longitude: s.longitude,
+              order: s.order ?? i + 1,
+            }))
+        : [{ name: "", latitude: "", longitude: "", order: 1 }],
     });
     setOpen(true);
   };
+
 
   /* ================= TOGGLE ACTIVE ================= */
   const toggleActive = async (routeId, currentStatus) => {
@@ -246,9 +273,35 @@ export default function ManageRoutes() {
                 {/* STOPS */}
                 {form.stops.map((s, i) => (
                   <div key={i} className="space-y-2">
-                    <Input placeholder="Stop Name" value={s.name} onChange={(e) => updateStop(i, "name", e.target.value)} />
-                    <Input placeholder="Latitude" value={s.latitude} onChange={(e) => updateStop(i, "latitude", e.target.value)} />
-                    <Input placeholder="Longitude" value={s.longitude} onChange={(e) => updateStop(i, "longitude", e.target.value)} />
+                    <Input
+                      type="number"
+                      placeholder="Order"
+                      value={s.order}
+                      onChange={(e) =>
+                        updateStop(i, "order", e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Stop Name"
+                      value={s.name}
+                      onChange={(e) =>
+                        updateStop(i, "name", e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Latitude"
+                      value={s.latitude}
+                      onChange={(e) =>
+                        updateStop(i, "latitude", e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Longitude"
+                      value={s.longitude}
+                      onChange={(e) =>
+                        updateStop(i, "longitude", e.target.value)
+                      }
+                    />
                   </div>
                 ))}
 
@@ -307,3 +360,6 @@ export default function ManageRoutes() {
     </div>
   );
 }
+
+
+
