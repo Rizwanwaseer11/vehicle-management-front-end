@@ -1,3 +1,201 @@
+// import React from "react";
+// import { Plus, Pencil, MapPin, Eye, EyeOff } from "lucide-react";
+// import {
+//   Dialog,
+//   DialogTrigger,
+//   DialogContent,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogFooter,
+// } from "@/components/ui/dialog";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import {
+//   Select,
+//   SelectTrigger,
+//   SelectValue,
+//   SelectContent,
+//   SelectItem,
+// } from "@/components/ui/select";
+
+// export default function ManageRoutes() {
+//   const [open, setOpen] = React.useState(false);
+//   const [editRoute, setEditRoute] = React.useState(null);
+//   const [routes, setRoutes] = React.useState([]);
+//   const [drivers, setDrivers] = React.useState([]);
+//   const [buses, setBuses] = React.useState([]);
+
+//   const token = localStorage.getItem("token");
+
+//   const [form, setForm] = React.useState({
+//     routeName: "",
+//     driver: "",
+//     bus: "",
+//     startTime: "",
+//     endTime: "",
+//     totalKm: "",
+//     stops: [{ name: "", latitude: "", longitude: "", order: 1 }],
+//   });
+
+  
+
+//   /* ================= FETCH DATA ================= */
+//   React.useEffect(() => {
+//     fetchTrips();
+//     fetchDrivers();
+//     fetchBuses();
+//   }, []);
+
+//  const fetchTrips = async () => {
+//   try {
+//     const res = await fetch(
+//       "https://vehicle-management-ecru.vercel.app/api/trips/",
+//       {
+//         headers: { Authorization: `Bearer ${token}` },
+//     });
+
+//     const data = await res.json();
+
+//     // ✅ FIX HERE
+//     setRoutes(Array.isArray(data.trips) ? data.trips : []);
+
+//   } catch (err) {
+//     console.error("Failed to fetch trips", err);
+//     setRoutes([]);
+//   }
+// };
+
+
+//   const fetchDrivers = async () => {
+//     try {
+//       const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-drivers", {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       const data = await res.json();
+//       setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
+//     } catch (err) {
+//       console.error("Failed to fetch drivers", err);
+//       setDrivers([]);
+//     }
+//   };
+
+//   const fetchBuses = async () => {
+//     try {
+//       const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       const data = await res.json();
+//       setBuses(Array.isArray(data.buses) ? data.buses : []);
+//     } catch (err) {
+//       console.error("Failed to fetch buses", err);
+//       setBuses([]);
+//     }
+//   };
+
+//   /* ================= STOPS ================= */
+//   const addStop = () => {
+//     setForm({
+//       ...form,
+//       stops: [
+//         ...form.stops,
+//         {
+//           name: "",
+//           latitude: "",
+//           longitude: "",
+//           order: form.stops.length + 1,
+//         },
+//       ],
+//     });
+//   };
+
+//   const updateStop = (i, field, value) => {
+//     const updated = [...form.stops];
+//     updated[i][field] = value;
+//     setForm({ ...form, stops: updated });
+//   };
+
+//   /* ================= CREATE / UPDATE ================= */
+//   const handleCreateOrUpdate = async () => {
+//     if (form.totalKm === "" || isNaN(form.totalKm)) {
+//       alert("Total KM is required and must be a number.");
+//       return;
+//     }
+
+//     const payload = {
+//       ...form,
+//       totalKm: Number(form.totalKm),
+//       stops: form.stops.map((s) => ({
+//         ...s,
+//         order: Number(s.order),
+//       })),
+//     };
+
+//     const url = editRoute
+//       ? `https://vehicle-management-ecru.vercel.app/api/trips/${editRoute._id}`
+//       : "https://vehicle-management-ecru.vercel.app/api/trips/";
+
+//     try {
+//       await fetch(url, {
+//         method: editRoute ? "PUT" : "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify(payload),
+//       });
+
+//       setOpen(false);
+//       setEditRoute(null);
+//       fetchTrips();
+//       fetchDrivers();
+//     } catch (err) {
+//       console.error("Failed to create/update trip", err);
+//       alert("Failed to create/update trip. Please check the console.");
+//     }
+//   };
+
+//   /* ================= EDIT ROUTE ================= */
+//   const handleEditRoute = (route) => {
+//     setEditRoute(route);
+//     setForm({
+//       routeName: route.routeName,
+//       driver: route.driver?._id || route.driver || "",
+//       bus: route.bus?._id || route.bus || "",
+//       startTime: route.startTime
+//         ? new Date(route.startTime).toISOString().slice(0, 16)
+//         : "",
+//       endTime: route.endTime
+//         ? new Date(route.endTime).toISOString().slice(0, 16)
+//         : "",
+//       totalKm: route.totalKm || "",
+//       stops: route.stops.length
+//         ? route.stops
+//             .sort((a, b) => a.order - b.order)
+//             .map((s, i) => ({
+//               name: s.name,
+//               latitude: s.latitude,
+//               longitude: s.longitude,
+//               order: s.order ?? i + 1,
+//             }))
+//         : [{ name: "", latitude: "", longitude: "", order: 1 }],
+//     });
+//     setOpen(true);
+//   };
+
+
+//   /* ================= TOGGLE ACTIVE ================= */
+//   const toggleActive = async (routeId, currentStatus) => {
+//     await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeId}/toggle`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ isActive: !currentStatus }),
+//     });
+//     fetchTrips();
+//   };
+
 import React from "react";
 import { Plus, Pencil, MapPin, Eye, EyeOff } from "lucide-react";
 import {
@@ -37,6 +235,45 @@ export default function ManageRoutes() {
     stops: [{ name: "", latitude: "", longitude: "", order: 1 }],
   });
 
+  /* ================= FORM SYNC (CORE FIX) ================= */
+  React.useEffect(() => {
+    if (editRoute) {
+      setForm({
+        routeName: editRoute.routeName || "",
+        driver: editRoute.driver?._id || "",
+        bus: editRoute.bus?._id || "",
+        startTime: editRoute.startTime
+          ? new Date(editRoute.startTime).toISOString().slice(0, 16)
+          : "",
+        endTime: editRoute.endTime
+          ? new Date(editRoute.endTime).toISOString().slice(0, 16)
+          : "",
+        totalKm: editRoute.totalKm?.toString() || "",
+        stops:
+          editRoute.stops?.length > 0
+            ? editRoute.stops
+                .sort((a, b) => a.order - b.order)
+                .map((s, i) => ({
+                  name: s.name || "",
+                  latitude: s.latitude || "",
+                  longitude: s.longitude || "",
+                  order: s.order ?? i + 1,
+                }))
+            : [{ name: "", latitude: "", longitude: "", order: 1 }],
+      });
+    } else {
+      setForm({
+        routeName: "",
+        driver: "",
+        bus: "",
+        startTime: "",
+        endTime: "",
+        totalKm: "",
+        stops: [{ name: "", latitude: "", longitude: "", order: 1 }],
+      });
+    }
+  }, [editRoute]);
+
   /* ================= FETCH DATA ================= */
   React.useEffect(() => {
     fetchTrips();
@@ -44,31 +281,28 @@ export default function ManageRoutes() {
     fetchBuses();
   }, []);
 
- const fetchTrips = async () => {
-  try {
-    const res = await fetch(
-      "https://vehicle-management-ecru.vercel.app/api/trips/",
-      {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await res.json();
-
-    // ✅ FIX HERE
-    setRoutes(Array.isArray(data.trips) ? data.trips : []);
-
-  } catch (err) {
-    console.error("Failed to fetch trips", err);
-    setRoutes([]);
-  }
-};
-
+  const fetchTrips = async () => {
+    try {
+      const res = await fetch(
+        "https://vehicle-management-ecru.vercel.app/api/trips/",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      setRoutes(Array.isArray(data.trips) ? data.trips : []);
+    } catch (err) {
+      console.error("Failed to fetch trips", err);
+      setRoutes([]);
+    }
+  };
 
   const fetchDrivers = async () => {
     try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-drivers", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://vehicle-management-ecru.vercel.app/api/trips/available-drivers",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       const data = await res.json();
       setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
     } catch (err) {
@@ -79,9 +313,10 @@ export default function ManageRoutes() {
 
   const fetchBuses = async () => {
     try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://vehicle-management-ecru.vercel.app/api/buses/available-buses",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       const data = await res.json();
       setBuses(Array.isArray(data.buses) ? data.buses : []);
     } catch (err) {
@@ -92,18 +327,18 @@ export default function ManageRoutes() {
 
   /* ================= STOPS ================= */
   const addStop = () => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       stops: [
-        ...form.stops,
+        ...prev.stops,
         {
           name: "",
           latitude: "",
           longitude: "",
-          order: form.stops.length + 1,
+          order: prev.stops.length + 1,
         },
       ],
-    });
+    }));
   };
 
   const updateStop = (i, field, value) => {
@@ -148,49 +383,29 @@ export default function ManageRoutes() {
       fetchDrivers();
     } catch (err) {
       console.error("Failed to create/update trip", err);
-      alert("Failed to create/update trip. Please check the console.");
+      alert("Failed to create/update trip.");
     }
   };
 
   /* ================= EDIT ROUTE ================= */
   const handleEditRoute = (route) => {
     setEditRoute(route);
-    setForm({
-      routeName: route.routeName,
-      driver: route.driver?._id || route.driver || "",
-      bus: route.bus?._id || route.bus || "",
-      startTime: route.startTime
-        ? new Date(route.startTime).toISOString().slice(0, 16)
-        : "",
-      endTime: route.endTime
-        ? new Date(route.endTime).toISOString().slice(0, 16)
-        : "",
-      totalKm: route.totalKm || "",
-      stops: route.stops.length
-        ? route.stops
-            .sort((a, b) => a.order - b.order)
-            .map((s, i) => ({
-              name: s.name,
-              latitude: s.latitude,
-              longitude: s.longitude,
-              order: s.order ?? i + 1,
-            }))
-        : [{ name: "", latitude: "", longitude: "", order: 1 }],
-    });
     setOpen(true);
   };
 
-
   /* ================= TOGGLE ACTIVE ================= */
   const toggleActive = async (routeId, currentStatus) => {
-    await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeId}/toggle`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ isActive: !currentStatus }),
-    });
+    await fetch(
+      `https://vehicle-management-ecru.vercel.app/api/trips/${routeId}/toggle`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ isActive: !currentStatus }),
+      }
+    );
     fetchTrips();
   };
 
@@ -214,7 +429,7 @@ export default function ManageRoutes() {
             </DialogTrigger>
 
             {/* MODAL */}
-            <DialogContent className="max-w-md p-6 sm:p-8 max-h-[80vh] overflow-y-auto">
+            <DialogContent key={editRoute ? editRoute._id : "create"}  className="max-w-md p-6 sm:p-8 max-h-[80vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editRoute ? "Edit Route" : "Add New Route"}</DialogTitle>
               </DialogHeader>
