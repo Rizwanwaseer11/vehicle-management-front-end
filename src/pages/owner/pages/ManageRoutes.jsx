@@ -354,7 +354,9 @@ export default function ManageRoutes() {
   };
 
   return (
-    <div className="pl-0 md:pl-64 pt-20 pr-4 pb-6 min-h-screen w-full bg-gray-100 dark:bg-gray-900">
+    
+    <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800 md:ml-64 pt-16 
+    md:pt-20 px-4 md:px-6 lg:px-8 pl-0 md:pl-64 mt-5  pr-4 pb-6  ">
       <div className="max-w-7xl mx-auto space-y-6">
       
       {/* === DIALOG === */}
