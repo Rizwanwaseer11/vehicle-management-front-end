@@ -161,7 +161,7 @@ useEffect(() => {
       icon: User,
       color: "bg-green-500/30",
       textColor: "text-green-500",
-      change: "From users API",
+      change: "All active drivers",
     },
     {
       title: "Active Routes",
