@@ -145,7 +145,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
   );
 
   return (
-    <div className="antialiased p-10 w-full h-full min-h-screen bg-gray-200 dark:bg-gray-700 md:ml-64 pt-20">
+    <div className="antialiased p-10 w-full h-full min-h-screen bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-20">
       {/* Header */}
       <div className="flex justify-between mt-9 mb-5">
         <div>
@@ -163,26 +163,26 @@ const ManagePassengers = ({ isEmployeePath }) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500 rounded-ss-lg">
+              <TableHead className="bg-gray-100 p-4 dark:bg-muted/60 rounded-ss-lg">
                 Name
               </TableHead>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-4 dark:bg-muted/60">
                 Email
               </TableHead>
-              <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
                 Phone
               </TableHead>
-              <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
                 Route
               </TableHead>
-              <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
                 Created At
               </TableHead>
-              <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
                 Status
               </TableHead>
               {!isEmployeePath && (
-                <TableHead className="bg-gray-100 pe-9 dark:bg-gray-500 rounded-tr-lg text-right">
+                <TableHead className="bg-gray-100 pe-9 dark:bg-muted/60 rounded-tr-lg text-right">
                   Actions
                 </TableHead>
               )}

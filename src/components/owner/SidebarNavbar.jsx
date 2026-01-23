@@ -51,7 +51,7 @@ const SidebarNavbar = () => {
             <Link to={"/admin"} className="flex items-center">
               <Bus className="h-8 w-8 mr-2 text-indigo-600" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Tranport App
+                Island Drive
               </span>
             </Link>
           </div>

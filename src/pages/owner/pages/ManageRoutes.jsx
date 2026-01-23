@@ -355,7 +355,7 @@ export default function ManageRoutes() {
 
   return (
     
-    <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800 md:ml-64 pt-16 
+    <div className="antialiased w-full min-h-screen bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-16 
     md:pt-20 px-4 md:px-6 lg:px-8 pl-0 md:pl-64 mt-5  pr-4 pb-6  ">
       <div className="max-w-7xl mx-auto space-y-6">
       
@@ -382,16 +382,16 @@ export default function ManageRoutes() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6  space-y-6">
             
             {/* DETAILS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5 col-span-1 md:col-span-2">
+                <div className="space-y-1.5 col-span-1  md:col-span-2">
                     <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">Route Name</Label>
                     <Input placeholder="e.g. Express Line 101" value={form.routeName} onChange={(e) => setForm({ ...form, routeName: e.target.value })} className="h-10"/>
                 </div>
                 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 ">
                     <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">Driver</Label>
                     <Select value={form.driver} onValueChange={(v) => setForm({...form, driver: v})}>
                         <SelectTrigger className="h-10"><SelectValue placeholder="Select Driver" /></SelectTrigger>
@@ -533,36 +533,36 @@ export default function ManageRoutes() {
       </Dialog>
       
       {/* Table Section (Same as before) */}
-      <div className="bg-white rounded-lg shadow border overflow-hidden">
+      <div className="bg-white dark:bg-gray-600  rounded-lg shadow border overflow-hidden">
         <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[800px]">
-              <thead className="bg-gray-50 border-b">
+              <thead className="bg-gray-50  dark:bg-gray-400 border-b">
                 <tr>
-                  <th className="py-3 px-4 text-left font-semibold text-gray-600">Route</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">Driver</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">Bus</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">Stops</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">KM</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">Active</th>
-                  <th className="py-3 px-4 text-center font-semibold text-gray-600">Actions</th>
+                  <th className="py-3 px-4 text-left font-semibold dark:text-white  text-gray-600">Route</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white   text-gray-600">Driver</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white text-gray-600">Bus</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white text-gray-600">Stops</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white  text-gray-600">KM</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white text-gray-600">Active</th>
+                  <th className="py-3 px-4 text-center font-semibold dark:text-white text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {routes.map((r) => (
                   <tr key={r._id} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="py-3 px-4 font-medium text-gray-900">{r.routeName}</td>
-                    <td className="text-center text-gray-600">{r.driver?.name || "-"}</td>
-                    <td className="text-center text-gray-600">{r.bus?.number || "-"}</td>
-                    <td className="text-center text-gray-600">{r.stops?.length || 0}</td>
-                    <td className="text-center text-gray-600">{r.totalKm}</td>
+                    <td className="py-3 px-4 font-medium text-gray-900 dark:text-gray-200">{r.routeName}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{r.driver?.name || "-"}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{r.bus?.number || "-"}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{r.stops?.length || 0}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{r.totalKm}</td>
                     <td className="text-center">
                       <Button size="sm" variant="ghost" onClick={() => toggleActive(r._id, r.isActive)}>
-                        {r.isActive ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-red-400" />}
+                        {r.isActive ? <Eye size={16} className="text-green-600 dark:text-green-400 " /> : <EyeOff size={16} className="text-red-400" />}
                       </Button>
                     </td>
                     <td className="flex justify-center gap-2 py-2">
                       <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handleEditRoute(r)}>
-                        <Pencil size={14} />
+                        <Pencil className=" dark:text-blue-400 " size={14} />
                       </Button>
                     </td>
                   </tr>

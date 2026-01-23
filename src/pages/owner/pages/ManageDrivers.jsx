@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {ToggleLeft, Eye, EyeClosed, Trash, Edit } from "lucide-react";
+import { ToggleLeft, Eye, EyeClosed, Trash, Edit } from "lucide-react";
 import AddDriverModal from "@/components/Models/AddDriver"; // your modal component
 
 export default function ManageDrivers({ isEmployeePath }) {
@@ -33,7 +33,7 @@ export default function ManageDrivers({ isEmployeePath }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
       const drivers = data.filter((user) => user.role === "driver");
@@ -50,10 +50,9 @@ export default function ManageDrivers({ isEmployeePath }) {
   }, []);
 
   const totalResults = drivers.length;
-  const paginatedDrivers = drivers.slice(
-    (page - 1) * resultsPerPage,
-    page * resultsPerPage
-  );
+  const paginatedDrivers = drivers
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice((page - 1) * resultsPerPage, page * resultsPerPage);
 
   // ✅ Delete driver
   const handleDelete = async (id) => {
@@ -65,7 +64,7 @@ export default function ManageDrivers({ isEmployeePath }) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       setDrivers((prev) => prev.filter((d) => d._id !== id));
     } catch (err) {
@@ -73,34 +72,36 @@ export default function ManageDrivers({ isEmployeePath }) {
     }
   };
 
- // ✅ Toggle user status between 'pending' and 'approved'
-const handleStatus = async (driver) => {
-  try {
-    // Determine the new status
-    const updatedStatus = driver.status === "approved" ? "pending" : "approved";
+  // ✅ Toggle user status between 'pending' and 'approved'
+  const handleStatus = async (driver) => {
+    try {
+      // Determine the new status
+      const updatedStatus =
+        driver.status === "approved" ? "pending" : "approved";
 
-    // Send request to update backend
-    await fetch(`https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ status: updatedStatus }),
-    });
+      // Send request to update backend
+      await fetch(
+        `https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: updatedStatus }),
+        },
+      );
 
-    // Update state locally so the UI reflects change immediately
-    setDrivers((prev) =>
-      prev.map((d) =>
-        d._id === driver._id ? { ...d, status: updatedStatus } : d
-      )
-    );
-  } catch (err) {
-    console.error("Error updating driver status", err);
-  }
-};
-
-
+      // Update state locally so the UI reflects change immediately
+      setDrivers((prev) =>
+        prev.map((d) =>
+          d._id === driver._id ? { ...d, status: updatedStatus } : d,
+        ),
+      );
+    } catch (err) {
+      console.error("Error updating driver status", err);
+    }
+  };
 
   // ✅ Fetch single driver for edit
   const handleEdit = async (id) => {
@@ -111,7 +112,7 @@ const handleStatus = async (driver) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
       setEditDriver(data);
@@ -121,7 +122,7 @@ const handleStatus = async (driver) => {
   };
 
   return (
-    <div className="antialiased p-10 w-full  h-full min-h-screen  bg-gray-200 dark:bg-gray-700 md:ml-64  pt-20 ">
+    <div className="antialiased p-10 w-full  h-full min-h-screen  bg-gray-200 dark:bg-gray-800/95 md:ml-64  pt-20 ">
       {/* Header */}
       <div className="flex justify-between items-center mb-2 mt-8">
         <div>
@@ -129,23 +130,40 @@ const handleStatus = async (driver) => {
             Manage Drivers
           </h2>
           <p className="text-sm font-light text-gray-600 dark:text-gray-300">
-            Real-time transportation management insights
+            Add, edit, or remove drivers
           </p>
         </div>
-        {!isEmployeePath && <AddDriverModal driver={editDriver} />}
+        <div className="mb-0">
+          {!isEmployeePath && <AddDriverModal driver={editDriver} />}
+        </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border shadow-sm text-gray-600 bg-white dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500 dark:shadow-sm">
+      <div
+        className="rounded-lg border shadow-sm text-gray-600 bg-white dark:bg-gray-600
+       dark:text-gray-300 dark:border-gray-500 dark:shadow-sm"
+      >
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500 rounded-ss-lg">Name</TableHead>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">Email</TableHead>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">Phone</TableHead>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">Route</TableHead>
-              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">Status</TableHead>
-               <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">Created At</TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500 rounded-ss-lg">
+                Name
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Email
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Phone
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Route
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Status
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Created At
+              </TableHead>
               {!isEmployeePath && (
                 <TableHead className="bg-gray-100 p-4 dark:bg-gray-500 rounded-tr-lg text-right">
                   Actions
@@ -161,10 +179,12 @@ const handleStatus = async (driver) => {
                 <TableCell>{driver.email}</TableCell>
                 <TableCell>{driver.phone}</TableCell>
                 <TableCell>{driver.route}</TableCell>
-                
+
                 <TableCell>
                   <Badge
-                    variant={driver.status === "approved" ? "default" : "secondary"}
+                    variant={
+                      driver.status === "approved" ? "default" : "secondary"
+                    }
                     className={`shadow ${
                       driver.status === "approved"
                         ? "bg-green-200 text-green-600"
@@ -174,18 +194,17 @@ const handleStatus = async (driver) => {
                     {driver.status}
                   </Badge>
                 </TableCell>
-                
-                <TableCell>
-  {driver.createdAt
-    ? new Date(driver.createdAt).toLocaleDateString("en-GB")
-    : "-"}
-</TableCell>
 
+                <TableCell>
+                  {driver.createdAt
+                    ? new Date(driver.createdAt).toLocaleDateString("en-GB")
+                    : "-"}
+                </TableCell>
 
                 {!isEmployeePath && (
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-3">
-                     {/* <Button
+                      {/* <Button
   variant="ghost"
   size="icon"
   onClick={() => handleStatus(driver)}
@@ -196,23 +215,22 @@ const handleStatus = async (driver) => {
     <EyeClosed className="w-4 h-4" />
   )}
 </Button> */}
-{/*  Inside your table cell */ }
-<Button
-  variant="ghost"
-  size="icon" // keep existing size
-  onClick={() => handleStatus(driver)}
-  className={`transition-colors w-10 ${  // <--- added w-10 to increase width
-    driver.status === "approved"
-      ? "text-green-500 hover:text-green-600"
-      : "text-red-500 hover:text-red-600"
-  }`}
->
-  <ToggleLeft className="w-12 h-6" />
-</Button>
+                      {/*  Inside your table cell */}
+                      <Button
+                        variant="ghost"
+                        size="icon" // keep existing size
+                        onClick={() => handleStatus(driver)}
+                        className={`transition-colors w-10 ${
+                          // <--- added w-10 to increase width
+                          driver.status === "approved"
+                            ? "text-green-500 hover:text-green-600"
+                            : "text-red-500 hover:text-red-600"
+                        }`}
+                      >
+                        <ToggleLeft className="w-12 h-6" />
+                      </Button>
 
-
-
-{/* removed edit button for now */}
+                      {/* removed edit button for now */}
                       {/* <Button
                         variant="ghost"
                         size="icon"

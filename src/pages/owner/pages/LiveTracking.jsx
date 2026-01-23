@@ -1,28 +1,3 @@
-// import React from 'react'
-
-// const BusTracking = () => {
-//   return (
-//     <div className="antialiased p-10 w-full h-full min-h-screen bg-gray-200 dark:bg-gray-700 md:ml-64 pt-20">
-//         BusTracking
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//         <h1>saskjaksjksjk</h1>
-//     </div>
-//   )
-// }
-
-// export default BusTracking
-
 import { useState } from "react";
 import {
   Card,
@@ -70,7 +45,7 @@ function LiveTracking() {
   ];
 
   return (
-    <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800 md:ml-64 pt-16 md:pt-20 px-4 mt-4 md:px-6 lg:px-8">
+    <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800/95 md:ml-64 pt-16 md:pt-20 px-4 mt-4 md:px-6 lg:px-8">
       <div className="mb-3">
         <h1 className="text-xl md:text-xl font-bold text-gray-700 dark:text-white ">
           Live Bus Tracking
@@ -84,9 +59,10 @@ function LiveTracking() {
         {/* Map Section */}
         {/* <div className="lg:col-span-2"> */}
         <div className="lg:col-span-2">
-          <Card className="shadow-md p-0 border-1 overflow-hidden">
+          <Card className="shadow-md p-0 border overflow-hidden">
             <CardContent className="p-0">
-              <div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 w-full h-[250px] md:h-[380px] lg:h-[420px] relative overflow-hidden">
+              <div className="bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 w-full 
+              h-[250px] md:h-[380px] lg:h-[420px] relative overflow-hidden">
                 {/* Mock map grid */}
                 <div className="absolute inset-0 opacity-10 dark:opacity-20">
                   <svg className="w-full h-full">
