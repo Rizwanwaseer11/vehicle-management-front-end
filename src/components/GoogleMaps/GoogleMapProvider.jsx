@@ -9,7 +9,7 @@ export default function GoogleMapProvider({ children }) {
   return (
     <LoadScript
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_KEY}
-      libraries={libraries}
+      libraries={["places"]}
     >
       {children}
     </LoadScript>

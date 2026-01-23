@@ -6,10 +6,15 @@ import {BrowserRouter} from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 
+import GoogleMapProvider from "./components/GoogleMaps/GoogleMapProvider";
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-     <App />
+    <GoogleMapProvider>
+ <App />
+    </GoogleMapProvider>
+    
     </BrowserRouter>
   </StrictMode>,
 )
