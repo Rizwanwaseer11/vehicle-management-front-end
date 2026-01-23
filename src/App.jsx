@@ -15,6 +15,7 @@ import ManagePassengers from "./pages/owner/pages/ManagePassengers";
 import ManageRoutes from "./pages/owner/pages/ManageRoutes";
 import { Login } from "./pages/Login";
 import LayoutEmp from "./pages/Employee/LayoutEmp";
+import LiveTracking from "./pages/owner/pages/LiveTracking";
 
 function App() {
   //navbars locations
@@ -55,6 +56,7 @@ function App() {
               <Route path="manage-drivers" element={<ManageDrivers />} />
               <Route path="manage-passengers" element={<ManagePassengers />} />
               <Route path="manage-routes" element={<ManageRoutes />} />
+              <Route path="manage-tracking" element={<LiveTracking />} />
             </Route>
 
             {/* Employee */}

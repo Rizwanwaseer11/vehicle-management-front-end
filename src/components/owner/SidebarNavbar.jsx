@@ -3,22 +3,22 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import { LogOut,Bus ,House ,Route,  Users,CircleUser} from "lucide-react";
+import { LogOut, Bus, House, Route, Users, CircleUser,MapPinCheckInside } from "lucide-react";
+
 
 const SidebarNavbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+  const handleLogOut = () => {
+    // 1. Remove auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
 
-const handleLogOut = () => {
-  // 1. Remove auth data
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-
-  // 3. Redirect to login
-  navigate("/login", { replace: true });
-};
+    // 3. Redirect to login
+    navigate("/login", { replace: true });
+  };
 
   return (
     <>
@@ -49,7 +49,6 @@ const handleLogOut = () => {
           </button>
           <div className="flex justify-start items-center">
             <Link to={"/admin"} className="flex items-center">
-            
               <Bus className="h-8 w-8 mr-2 text-indigo-600" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                 Tranport App
@@ -112,14 +111,14 @@ const handleLogOut = () => {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } sm:translate-x-0`}
         >
-         <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
+          <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
             <ul className="space-y-2 text-sm  font-sm">
               <li>
                 <Link
                   to={"/admin"}
                   className="flex mt-17 items-center w-full justify-between px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                 >
-                  <House className=" w-5 h-5 "/>
+                  <House className=" w-5 h-5 " />
                   <span className="flex-1 ms-3  text-left rtl:text-right whitespace-nowrap">
                     Dashboard
                   </span>
@@ -130,11 +129,9 @@ const handleLogOut = () => {
                   to={"manage-drivers"}
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                 >
-                  <CircleUser  className=" w-5 h-5 "/>
+                  <CircleUser className=" w-5 h-5 " />
 
-                  <span className="flex-1 ms-3 whitespace-nowrap">
-                    Drivers
-                  </span>
+                  <span className="flex-1 ms-3 whitespace-nowrap">Drivers</span>
                 </Link>
               </li>
               <li>
@@ -145,11 +142,25 @@ const handleLogOut = () => {
                   <Users className=" w-5 h-5 " />
 
                   <span className="flex-1 ms-3 whitespace-nowrap">
-                   Passengers
+                    Passengers
                   </span>
                 </Link>
               </li>
-              
+
+              {/* /////// */}
+              <li>
+                <Link
+                  to={"manage-tracking"}
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                >
+                  <MapPinCheckInside className=" w-5 h-5 " />
+
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Live Tracking
+                  </span>
+                </Link>
+              </li>
+              {/* /// */}
               <li>
                 <Link
                   to={"manage-routes"}
@@ -162,9 +173,6 @@ const handleLogOut = () => {
                   </span>
                 </Link>
               </li>
-              
-             
-              
             </ul>
             <ul className="space-y-2 font-medium border-t-2 border-gray-300 pt-6 mt-4">
               <li>
@@ -190,7 +198,7 @@ const handleLogOut = () => {
                     />
                   </svg> */}
                   {/* <span className="flex-1 ms-3 whitespace-nowrap"> */}
-                    {/* Documentation */}
+                  {/* Documentation */}
                   {/* </span> */}
                 </a>
               </li>
@@ -219,19 +227,19 @@ const handleLogOut = () => {
                   {/* <span className="flex-1 ms-3 whitespace-nowrap">Support</span> */}
                 </a>
               </li>
-              <li >
-                <div                  
-                  className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
-                  
-                >
-                 <LogOut  className="text-red-600 " />
-                  <span className="flex-1 ms-3 text-red-600 whitespace-nowrap cursor-pointer" onClick={handleLogOut}>Log out </span>
+              <li>
+                <div className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                  <LogOut className="text-red-600 " />
+                  <span
+                    className="flex-1 ms-3 text-red-600 whitespace-nowrap cursor-pointer"
+                    onClick={handleLogOut}
+                  >
+                    Log out{" "}
+                  </span>
                 </div>
               </li>
-              
             </ul>
-          </div> 
-          
+          </div>
         </aside>
       </div>
     </>

@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ToggleLeft,Eye, EyeClosed, Trash } from "lucide-react";
+import { ToggleLeft, Eye, EyeClosed, Trash } from "lucide-react";
 
 const ManagePassengers = ({ isEmployeePath }) => {
   const [passengers, setPassengers] = useState([]);
@@ -32,11 +29,14 @@ const ManagePassengers = ({ isEmployeePath }) => {
        * 🔴 REPLACE API URL BELOW
        * Example: GET /api/users
        */
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/admin/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://vehicle-management-ecru.vercel.app/api/admin/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       const data = await res.json();
 
@@ -62,12 +62,15 @@ const ManagePassengers = ({ isEmployeePath }) => {
        * 🔴 REPLACE API URL BELOW
        * Example: DELETE /api/users/:id
        */
-      await fetch(`https://vehicle-management-ecru.vercel.app/api/admin/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await fetch(
+        `https://vehicle-management-ecru.vercel.app/api/admin/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setPassengers((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
@@ -104,37 +107,41 @@ const ManagePassengers = ({ isEmployeePath }) => {
   // };
 
   // ✅ Toggle user status between 'pending' and 'approved'
-const handleStatus = async (driver) => {
-  try {
-    // Determine the new status
-    const updatedStatus = driver.status === "approved" ? "pending" : "approved";
+  const handleStatus = async (driver) => {
+    try {
+      // Determine the new status
+      const updatedStatus =
+        driver.status === "approved" ? "pending" : "approved";
 
-    // Send request to update backend
-    await fetch(`https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ status: updatedStatus }),
-    });
+      // Send request to update backend
+      await fetch(
+        `https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: updatedStatus }),
+        },
+      );
 
-    // Update state locally so the UI reflects change immediately
-    setPassengers((prev) =>
-      prev.map((d) =>
-        d._id === driver._id ? { ...d, status: updatedStatus } : d
-      )
-    );
-  } catch (err) {
-    console.error("Error updating Passenger status", err);
-  }
-};
+      // Update state locally so the UI reflects change immediately
+      setPassengers((prev) =>
+        prev.map((d) =>
+          d._id === driver._id ? { ...d, status: updatedStatus } : d,
+        ),
+      );
+    } catch (err) {
+      console.error("Error updating Passenger status", err);
+    }
+  };
 
   /* ================= PAGINATION ================= */
   const totalResults = passengers.length;
   const paginatedPassengers = passengers.slice(
     (page - 1) * resultsPerPage,
-    page * resultsPerPage
+    page * resultsPerPage,
   );
 
   return (
@@ -168,7 +175,7 @@ const handleStatus = async (driver) => {
               <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
                 Route
               </TableHead>
-               <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
+              <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
                 Created At
               </TableHead>
               <TableHead className="bg-gray-100 p-2 dark:bg-gray-500">
@@ -191,24 +198,26 @@ const handleStatus = async (driver) => {
                 <TableCell>{passenger.email || "-"}</TableCell>
                 <TableCell>{passenger.phone}</TableCell>
                 <TableCell>{passenger.route || "-"}</TableCell>
-                                <TableCell>
+                <TableCell>
                   {passenger.createdAt
                     ? new Date(passenger.createdAt).toLocaleDateString("en-GB")
                     : "-"}
                 </TableCell>
 
                 <TableCell>
-                                  <Badge
-                                    variant={passenger.status === "approved" ? "default" : "secondary"}
-                                    className={`shadow ${
-                                      passenger.status === "approved"
-                                        ? "bg-green-200 text-green-600"
-                                        : "bg-rose-200 text-red-600"
-                                    }`}
-                                  >
-                                    {passenger.status}
-                                  </Badge>
-                                </TableCell>
+                  <Badge
+                    variant={
+                      passenger.status === "approved" ? "default" : "secondary"
+                    }
+                    className={`shadow ${
+                      passenger.status === "approved"
+                        ? "bg-green-200 text-green-600"
+                        : "bg-rose-200 text-red-600"
+                    }`}
+                  >
+                    {passenger.status}
+                  </Badge>
+                </TableCell>
 
                 {!isEmployeePath && (
                   <TableCell className="text-right">
@@ -227,17 +236,18 @@ const handleStatus = async (driver) => {
                         )}
                       </Button> */}
                       <Button
-  variant="ghost"
-  size="icon" // keep existing size
-  onClick={() => handleStatus(passenger)}
-  className={`transition-colors w-10 ${  // <--- added w-10 to increase width
-    passenger.status === "approved"
-      ? "text-green-500 hover:text-green-600"
-      : "text-red-500 hover:text-red-600"
-  }`}
->
-  <ToggleLeft className="w-12 h-6" />
-</Button>
+                        variant="ghost"
+                        size="icon" // keep existing size
+                        onClick={() => handleStatus(passenger)}
+                        className={`transition-colors w-10 ${
+                          // <--- added w-10 to increase width
+                          passenger.status === "approved"
+                            ? "text-green-500 hover:text-green-600"
+                            : "text-red-500 hover:text-red-600"
+                        }`}
+                      >
+                        <ToggleLeft className="w-12 h-6" />
+                      </Button>
 
                       <Button
                         variant="ghost"
