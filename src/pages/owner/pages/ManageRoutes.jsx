@@ -465,285 +465,291 @@ export default function ManageRoutes() {
     md:pt-20 px-4 md:px-6 lg:px-8 pl-0 md:pl-64 mt-5  pr-4 pb-6  "
     >
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* === DIALOG === */}
-        <Dialog
-          open={open}
-          onOpenChange={(v) => {
-            setOpen(v);
-            if (!v) setEditRoute(null);
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button
-              className="flex gap-2 shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={handleAddNew}
-            >
-              <Plus size={16} />{" "}
-              <span className="hidden sm:inline">Add Route</span>{" "}
-              <span className="sm:hidden">Add</span>
-            </Button>
-          </DialogTrigger>
+      
+{/* === DIALOG === */}
+<Dialog
+  open={open}
+  onOpenChange={(v) => {
+    setOpen(v);
+    if (!v) setEditRoute(null);
+  }}
+>
+  <DialogTrigger asChild>
+    <Button
+      onClick={handleAddNew}
+      className="
+        flex items-center gap-2
+        bg-gradient-to-r from-blue-600 to-blue-700
+        hover:from-blue-700 hover:to-blue-800
+        text-white font-semibold
+        px-6 h-11
+        rounded-xl
+        shadow-lg shadow-blue-500/20
+        transition-all
+      "
+    >
+      <Plus size={16} />
+      <span className="hidden sm:inline">Add Route</span>
+      <span className="sm:hidden">Add</span>
+    </Button>
+  </DialogTrigger>
 
-          <DialogContent className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl flex flex-col p-0 gap-0 overflow-hidden bg-white dark:bg-gray-800 rounded-none sm:rounded-lg">
-            <DialogHeader className="p-4 border-b shrink-0 flex flex-col justify-between">
-              <DialogTitle className="text-lg font-bold">
-                {editRoute ? "Edit Route" : "Create New Route"}
-              </DialogTitle>
-              {/* ✅ FIXED: Added Description to silence Warning */}
-              <DialogDescription className="text-xs text-gray-500">
-                Enter details, search for stops, or pick them on the map.
-              </DialogDescription>
-            </DialogHeader>
+  <DialogContent
+    className="
+      w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-5xl
+      flex flex-col p-0 gap-0 overflow-hidden
+      bg-gray-50 dark:bg-gray-950
+      rounded-none sm:rounded-3xl
+      shadow-2xl
+    "
+  >
+    {/* ================= HEADER ================= */}
+    <DialogHeader
+      className="
+        sticky top-0 z-10
+        px-6 py-4
+        border-b
+        bg-white/80 dark:bg-gray-900/80
+        backdrop-blur
+      "
+    >
+      <DialogTitle className="text-xl font-bold tracking-tight">
+        {editRoute ? "Edit Route" : "Create New Route"}
+      </DialogTitle>
+      <DialogDescription className="text-sm text-gray-500">
+        Configure route details, timing, and stops precisely
+      </DialogDescription>
+    </DialogHeader>
 
-            <div className="flex-1 overflow-y-auto p-4 md:p-6  space-y-6">
-              {/* DETAILS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5 col-span-1  md:col-span-2">
-                  <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                    Route Name
-                  </Label>
-                  <Input
-                    placeholder="e.g. Express Line 101"
-                    value={form.routeName}
-                    onChange={(e) =>
-                      setForm({ ...form, routeName: e.target.value })
-                    }
-                    className="h-10"
-                  />
-                </div>
+    {/* ================= BODY ================= */}
+    <div className="flex-1 overflow-y-auto px-6 py-6 space-y-10">
 
-                <div className="space-y-1.5 ">
-                  <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                    Driver
-                  </Label>
-                  <Select
-                    value={form.driver}
-                    onValueChange={(v) => setForm({ ...form, driver: v })}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Select Driver" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {drivers.map((d) => (
-                        <SelectItem key={d._id} value={d._id}>
-                          {d.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+      {/* ================= ROUTE DETAILS ================= */}
+      <section className="space-y-4">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Route Information
+        </h3>
 
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                    Bus
-                  </Label>
-                  <Select
-                    value={form.bus}
-                    onValueChange={(v) => setForm({ ...form, bus: v })}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Select Bus" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {buses.map((b) => (
-                        <SelectItem key={b._id} value={b._id}>
-                          {b.number}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="
+          bg-white dark:bg-gray-900
+          rounded-2xl
+          border border-gray-200 dark:border-gray-800
+          p-6 space-y-5
+          shadow-sm
+        ">
+          <div>
+            <Label className="text-[11px] uppercase tracking-widest text-gray-500">
+              Route Name
+            </Label>
+            <Input
+              placeholder="Express Line 101"
+              value={form.routeName}
+              onChange={(e) =>
+                setForm({ ...form, routeName: e.target.value })
+              }
+              className="
+                h-12 mt-1 rounded-xl
+                text-base
+              "
+            />
+          </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider font-bold flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-blue-500" /> Start Time
-                  </Label>
-                  <Input
-                    type="datetime-local"
-                    value={form.startTime}
-                    onChange={(e) =>
-                      setForm({ ...form, startTime: e.target.value })
-                    }
-                    className="h-11 text-sm border-gray-300 dark:border-gray-600
-                     dark:bg-gray-700 dark:text-white focus:ring-2 
-                     focus:ring-blue-500 focus:border-transparent transition-all 
-                     rounded-lg shadow-sm hover:border-gray-400"
-                  />
-                </div>
-                <br />
-                <div className="space-y-2">
-                  <Label className="text-xs text-gray-600 dark:text-gray-300 uppercase tracking-wider font-bold flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-orange-500" /> End Time
-                  </Label>
-                  <Input
-                    type="datetime-local"
-                    value={form.endTime}
-                    onChange={(e) =>
-                      setForm({ ...form, endTime: e.target.value })
-                    }
-                    className="h-11 text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all rounded-lg shadow-sm hover:border-gray-400"
-                  />
-                </div>
-              </div>
-
-              <div className="border-t border-gray-100 my-2"></div>
-
-              {/* STOPS MANAGEMENT */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-end">
-                  <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                    Stops Management
-                  </Label>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  {/* ✅ CUSTOM SEARCH BAR */}
-                  <StopSearchInput onPlaceSelect={handleAddStop} />
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={addManualStop}
-                      className="flex-1 text-xs h-9"
-                    >
-                      + Manual Stop
-                    </Button>
-                    <Button
-                      variant={showMap ? "secondary" : "outline"}
-                      size="sm"
-                      onClick={() => setShowMap(!showMap)}
-                      className="flex-1 text-xs h-9 gap-1"
-                    >
-                      <MapIcon size={14} /> {showMap ? "Hide Map" : "Open Map"}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* The Map */}
-                {showMap && (
-                  <div className="w-full h-64 rounded-md overflow-hidden border border-gray-200 shadow-inner mt-2">
-                    <BaseMap
-                      center={DEFAULT_CENTER}
-                      onMapClick={async (e) => {
-                        if (!e?.latLng) return;
-                        const lat = e.latLng.lat();
-                        const lng = e.latLng.lng();
-                        const address = await getAddressFromLatLng(lat, lng);
-                        handleAddStop({
-                          name: address,
-                          latitude: lat,
-                          longitude: lng,
-                        });
-                      }}
-                    >
-                      <StopPicker
-                        stops={Array.isArray(form.stops) ? form.stops : []}
-                      />
-                      <RoutePreview encodedPolyline={routePolyline} />
-                    </BaseMap>
-                  </div>
-                )}
-
-                {/* Stops List */}
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-md border p-2 max-h-56 overflow-y-auto space-y-2">
-                  {(Array.isArray(form.stops) ? form.stops : []).map((s, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 bg-white p-2 rounded border border-gray-100 shadow-sm"
-                    >
-                      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
-                        {i + 1}
-                      </span>
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <Input
-                          value={s.name || ""}
-                          onChange={(e) =>
-                            updateStopValue(i, "name", e.target.value)
-                          }
-                          className="h-7 text-sm border-none bg-transparent p-0 focus-visible:ring-0 truncate font-medium"
-                          placeholder="Stop Name"
-                        />
-                        <div className="flex gap-2">
-                          <Input
-                            value={s.latitude !== undefined ? s.latitude : ""}
-                            onChange={(e) =>
-                              updateStopValue(i, "latitude", e.target.value)
-                            }
-                            placeholder="Lat"
-                            className="h-5 text-[10px] w-20 bg-gray-50"
-                          />
-                          <Input
-                            value={s.longitude !== undefined ? s.longitude : ""}
-                            onChange={(e) =>
-                              updateStopValue(i, "longitude", e.target.value)
-                            }
-                            placeholder="Lng"
-                            className="h-5 text-[10px] w-20 bg-gray-50"
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-7 w-7 text-gray-400 hover:text-red-600"
-                        onClick={() => removeStop(i)}
-                      >
-                        <X size={14} />
-                      </Button>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <Label className="text-[11px] uppercase tracking-widest text-gray-500">
+                Driver
+              </Label>
+              <Select
+                value={form.driver}
+                onValueChange={(v) => setForm({ ...form, driver: v })}
+              >
+                <SelectTrigger className="h-12 rounded-xl mt-1">
+                  <SelectValue placeholder="Select Driver" />
+                </SelectTrigger>
+                <SelectContent>
+                  {drivers.map((d) => (
+                    <SelectItem key={d._id} value={d._id}>
+                      {d.name}
+                    </SelectItem>
                   ))}
-                  {(!form.stops || form.stops.length === 0) && (
-                    <div className="text-center py-6 text-gray-400 text-sm">
-                      No stops added yet. Use search or map.
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* CALCULATE */}
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col gap-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-blue-900">
-                    Total Distance
-                  </span>
-                  <span className="text-xl font-bold text-blue-700">
-                    {form.totalKm ? `${form.totalKm} km` : "--"}
-                  </span>
-                </div>
-                <Button
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-                  disabled={isCalculating}
-                  onClick={handleCalculateRoute}
-                >
-                  {isCalculating ? (
-                    "Calculating..."
-                  ) : (
-                    <>
-                      <Calculator size={16} className="mr-2" /> Calculate Route
-                    </>
-                  )}
-                </Button>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
 
-            <DialogFooter className="p-4 border-t bg-white shrink-0 flex-col sm:flex-row gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setOpen(false)}
-                className="w-full sm:w-auto h-11 sm:h-10"
+            <div>
+              <Label className="text-[11px] uppercase tracking-widest text-gray-500">
+                Bus
+              </Label>
+              <Select
+                value={form.bus}
+                onValueChange={(v) => setForm({ ...form, bus: v })}
               >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleCreateOrUpdate}
-                className="w-full sm:w-auto h-11 sm:h-10 bg-green-600 hover:bg-green-700"
+                <SelectTrigger className="h-12 rounded-xl mt-1">
+                  <SelectValue placeholder="Select Bus" />
+                </SelectTrigger>
+                <SelectContent>
+                  {buses.map((b) => (
+                    <SelectItem key={b._id} value={b._id}>
+                      {b.number}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label className="text-[11px] uppercase tracking-widest text-gray-500 flex gap-2 items-center">
+                <Clock size={14} className="text-blue-500" /> Start Time
+              </Label>
+              <Input
+                type="datetime-local"
+                value={form.startTime}
+                onChange={(e) =>
+                  setForm({ ...form, startTime: e.target.value })
+                }
+                className="h-12 mt-1 rounded-xl"
+              />
+            </div>
+
+            <div>
+              <Label className="text-[11px] uppercase tracking-widest text-gray-500 flex gap-2 items-center">
+                <Clock size={14} className="text-orange-500" /> End Time
+              </Label>
+              <Input
+                type="datetime-local"
+                value={form.endTime}
+                onChange={(e) =>
+                  setForm({ ...form, endTime: e.target.value })
+                }
+                className="h-12 mt-1 rounded-xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= STOPS ================= */}
+      <section className="space-y-4">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Stops & Route Path
+        </h3>
+
+        <div className="
+          bg-white dark:bg-gray-900
+          rounded-2xl
+          border border-gray-200 dark:border-gray-800
+          p-6 space-y-5
+          shadow-sm
+        ">
+          <StopSearchInput onPlaceSelect={handleAddStop} />
+
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={addManualStop}>
+              + Manual Stop
+            </Button>
+            <Button
+              variant={showMap ? "secondary" : "outline"}
+              className="flex-1"
+              onClick={() => setShowMap(!showMap)}
+            >
+              <MapIcon size={14} />
+              {showMap ? " Hide Map" : " Open Map"}
+            </Button>
+          </div>
+
+          {showMap && (
+            <div className="
+              w-full h-72
+              rounded-2xl overflow-hidden
+              border shadow-inner
+            ">
+              <BaseMap
+                center={DEFAULT_CENTER}
+                onMapClick={async (e) => {
+                  const lat = e.latLng.lat();
+                  const lng = e.latLng.lng();
+                  const address = await getAddressFromLatLng(lat, lng);
+                  handleAddStop({ name: address, latitude: lat, longitude: lng });
+                }}
               >
-                {editRoute ? "Update Route" : "Create Route"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                <StopPicker stops={form.stops || []} />
+                <RoutePreview encodedPolyline={routePolyline} />
+              </BaseMap>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ================= DISTANCE ================= */}
+      <section>
+        <div className="
+          bg-gradient-to-br from-blue-600 to-blue-700
+          p-6 rounded-2xl
+          text-white
+          shadow-lg shadow-blue-500/30
+        ">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium opacity-90">
+              Total Distance
+            </span>
+            <span className="text-2xl font-bold">
+              {form.totalKm ? `${form.totalKm} km` : "--"}
+            </span>
+          </div>
+
+          <Button
+            disabled={isCalculating}
+            onClick={handleCalculateRoute}
+            className="
+              w-full mt-4 h-12
+              bg-white text-blue-700
+              hover:bg-gray-100
+              rounded-xl font-semibold
+            "
+          >
+            <Calculator size={16} className="mr-2" />
+            {isCalculating ? "Calculating..." : "Calculate Route"}
+          </Button>
+        </div>
+      </section>
+    </div>
+
+    {/* ================= FOOTER ================= */}
+    <DialogFooter
+      className="
+        sticky bottom-0
+        px-6 py-4
+        border-t
+        bg-white/80 dark:bg-gray-900/80
+        backdrop-blur
+        flex-col sm:flex-row gap-3
+      "
+    >
+      <Button
+        variant="outline"
+        className="w-full sm:w-auto h-11"
+        onClick={() => setOpen(false)}
+      >
+        Cancel
+      </Button>
+      <Button
+        className="
+          w-full sm:w-auto h-11
+          bg-green-600 hover:bg-green-700
+          text-white font-semibold
+          rounded-xl
+        "
+        onClick={handleCreateOrUpdate}
+      >
+        {editRoute ? "Update Route" : "Create Route"}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
+
+
+
 
         {/* Table Section (Same as before) */}
         <div className="bg-white dark:bg-gray-600  rounded-lg shadow border overflow-hidden">
@@ -829,5 +835,305 @@ export default function ManageRoutes() {
         </div>
       </div>
     </div>
+//     <div
+//   className="
+//     antialiased w-full min-h-screen
+//     bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200
+//     dark:from-gray-900 dark:via-gray-800 dark:to-gray-900
+//     md:ml-64 pt-16 md:pt-20
+//     px-4 md:px-6 lg:px-8
+//     pl-0 md:pl-64 mt-5 pb-10
+//   "
+// >
+//   <div className="max-w-7xl mx-auto space-y-8">
+
+//     {/* ================= ADD ROUTE BUTTON ================= */}
+//     <div className="flex justify-end">
+//       <Dialog
+//         open={open}
+//         onOpenChange={(v) => {
+//           setOpen(v);
+//           if (!v) setEditRoute(null);
+//         }}
+//       >
+//         <DialogTrigger asChild>
+//           <Button
+//             onClick={handleAddNew}
+//             className="
+//               flex items-center gap-2
+//               bg-blue-600 hover:bg-blue-700
+//               text-white font-semibold
+//               h-11 px-5
+//               rounded-xl
+//               shadow-md hover:shadow-lg
+//               transition-all
+//             "
+//           >
+//             <Plus size={16} />
+//             Add Route
+//           </Button>
+//         </DialogTrigger>
+
+//         {/* ================= DIALOG ================= */}
+//         <DialogContent
+//           className="
+//             w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-4xl
+//             flex flex-col p-0 gap-0 overflow-hidden
+//             bg-white dark:bg-gray-900
+//             rounded-none sm:rounded-2xl
+//             shadow-2xl
+//           "
+//         >
+//           <DialogHeader
+//             className="
+//               p-5 border-b
+//               bg-gray-50 dark:bg-gray-800
+//             "
+//           >
+//             <DialogTitle className="text-lg font-bold">
+//               {editRoute ? "Edit Route" : "Create New Route"}
+//             </DialogTitle>
+//             <DialogDescription className="text-sm text-gray-500">
+//               Manage route details, stops, and map selection
+//             </DialogDescription>
+//           </DialogHeader>
+
+//           {/* ================= BODY ================= */}
+//           <div className="flex-1 overflow-y-auto p-6 space-y-8">
+
+//             {/* ================= ROUTE DETAILS ================= */}
+//             <div className="
+//               bg-white dark:bg-gray-900
+//               rounded-2xl
+//               border border-gray-200 dark:border-gray-700
+//               p-5 space-y-4 shadow-sm
+//             ">
+//               <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">
+//                 Route Name
+//               </Label>
+//               <Input
+//                 value={form.routeName}
+//                 onChange={(e) =>
+//                   setForm({ ...form, routeName: e.target.value })
+//                 }
+//                 placeholder="Express Line 101"
+//                 className="
+//                   h-11 rounded-xl
+//                   border-gray-300 dark:border-gray-700
+//                   dark:bg-gray-800
+//                 "
+//               />
+
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 {/* DRIVER */}
+//                 <div>
+//                   <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">
+//                     Driver
+//                   </Label>
+//                   <Select
+//                     value={form.driver}
+//                     onValueChange={(v) => setForm({ ...form, driver: v })}
+//                   >
+//                     <SelectTrigger className="h-11 rounded-xl">
+//                       <SelectValue placeholder="Select Driver" />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       {drivers.map((d) => (
+//                         <SelectItem key={d._id} value={d._id}>
+//                           {d.name}
+//                         </SelectItem>
+//                       ))}
+//                     </SelectContent>
+//                   </Select>
+//                 </div>
+
+//                 {/* BUS */}
+//                 <div>
+//                   <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">
+//                     Bus
+//                   </Label>
+//                   <Select
+//                     value={form.bus}
+//                     onValueChange={(v) => setForm({ ...form, bus: v })}
+//                   >
+//                     <SelectTrigger className="h-11 rounded-xl">
+//                       <SelectValue placeholder="Select Bus" />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       {buses.map((b) => (
+//                         <SelectItem key={b._id} value={b._id}>
+//                           {b.number}
+//                         </SelectItem>
+//                       ))}
+//                     </SelectContent>
+//                   </Select>
+//                 </div>
+
+//                 {/* START TIME */}
+//                 <div>
+//                   <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 flex gap-1 items-center">
+//                     <Clock size={14} /> Start Time
+//                   </Label>
+//                   <Input
+//                     type="datetime-local"
+//                     value={form.startTime}
+//                     onChange={(e) =>
+//                       setForm({ ...form, startTime: e.target.value })
+//                     }
+//                     className="h-11 rounded-xl"
+//                   />
+//                 </div>
+
+//                 {/* END TIME */}
+//                 <div>
+//                   <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500 flex gap-1 items-center">
+//                     <Clock size={14} /> End Time
+//                   </Label>
+//                   <Input
+//                     type="datetime-local"
+//                     value={form.endTime}
+//                     onChange={(e) =>
+//                       setForm({ ...form, endTime: e.target.value })
+//                     }
+//                     className="h-11 rounded-xl"
+//                   />
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* ================= STOPS ================= */}
+//             <div className="
+//               bg-white dark:bg-gray-900
+//               rounded-2xl
+//               border border-gray-200 dark:border-gray-700
+//               p-5 space-y-4 shadow-sm
+//             ">
+//               <Label className="text-[11px] uppercase tracking-widest font-semibold text-gray-500">
+//                 Stops Management
+//               </Label>
+
+//               <StopSearchInput onPlaceSelect={handleAddStop} />
+
+//               <div className="flex gap-2">
+//                 <Button variant="outline" size="sm" onClick={addManualStop}>
+//                   + Manual Stop
+//                 </Button>
+//                 <Button
+//                   variant="outline"
+//                   size="sm"
+//                   onClick={() => setShowMap(!showMap)}
+//                 >
+//                   <MapIcon size={14} />
+//                   {showMap ? " Hide Map" : " Open Map"}
+//                 </Button>
+//               </div>
+
+//               {showMap && (
+//                 <div className="
+//                   w-full h-64 rounded-2xl overflow-hidden
+//                   border shadow-inner
+//                 ">
+//                   <BaseMap
+//                     center={DEFAULT_CENTER}
+//                     onMapClick={async (e) => {
+//                       const lat = e.latLng.lat();
+//                       const lng = e.latLng.lng();
+//                       const address = await getAddressFromLatLng(lat, lng);
+//                       handleAddStop({ name: address, latitude: lat, longitude: lng });
+//                     }}
+//                   >
+//                     <StopPicker stops={form.stops || []} />
+//                     <RoutePreview encodedPolyline={routePolyline} />
+//                   </BaseMap>
+//                 </div>
+//               )}
+//             </div>
+
+//             {/* ================= DISTANCE ================= */}
+//             <div className="
+//               bg-gradient-to-r from-blue-50 to-blue-100
+//               dark:from-blue-900/30 dark:to-blue-800/20
+//               p-5 rounded-2xl border shadow-sm
+//             ">
+//               <div className="flex justify-between items-center">
+//                 <span className="font-semibold">Total Distance</span>
+//                 <span className="text-xl font-bold text-blue-700">
+//                   {form.totalKm ? `${form.totalKm} km` : "--"}
+//                 </span>
+//               </div>
+
+//               <Button
+//                 onClick={handleCalculateRoute}
+//                 className="
+//                   w-full mt-3 h-11
+//                   bg-blue-600 hover:bg-blue-700
+//                   rounded-xl text-white font-semibold
+//                 "
+//               >
+//                 <Calculator size={16} className="mr-2" />
+//                 Calculate Route
+//               </Button>
+//             </div>
+//           </div>
+
+//           {/* ================= FOOTER ================= */}
+//           <DialogFooter className="p-5 border-t bg-gray-50 dark:bg-gray-800">
+//             <Button variant="outline" onClick={() => setOpen(false)}>
+//               Cancel
+//             </Button>
+//             <Button
+//               onClick={handleCreateOrUpdate}
+//               className="bg-green-600 hover:bg-green-700 text-white"
+//             >
+//               {editRoute ? "Update Route" : "Create Route"}
+//             </Button>
+//           </DialogFooter>
+//         </DialogContent>
+//       </Dialog>
+//     </div>
+
+//     {/* ================= TABLE ================= */}
+//     <div className="
+//       bg-white dark:bg-gray-900
+//       rounded-2xl shadow-md border
+//       overflow-hidden
+//     ">
+//       <table className="w-full text-sm">
+//         <thead className="bg-gray-100 dark:bg-gray-800">
+//           <tr>
+//             {["Route", "Driver", "Bus", "Stops", "KM", "Active", "Actions"].map(h => (
+//               <th key={h} className="py-3 px-4 text-gray-600 dark:text-gray-300 text-center">
+//                 {h}
+//               </th>
+//             ))}
+//           </tr>
+//         </thead>
+//         <tbody className="divide-y">
+//           {routes.map((r) => (
+//             <tr key={r._id} className="hover:bg-blue-50 dark:hover:bg-gray-800 transition">
+//               <td className="px-4 py-3 font-medium">{r.routeName}</td>
+//               <td className="text-center">{r.driver?.name || "-"}</td>
+//               <td className="text-center">{r.bus?.number || "-"}</td>
+//               <td className="text-center">{r.stops?.length || 0}</td>
+//               <td className="text-center">{r.totalKm}</td>
+//               <td className="text-center">
+//                 <Button variant="ghost" size="sm" onClick={() => toggleActive(r._id, r.isActive)}>
+//                   {r.isActive ? <Eye size={16} /> : <EyeOff size={16} />}
+//                 </Button>
+//               </td>
+//               <td className="text-center">
+//                 <Button variant="outline" size="sm" onClick={() => handleEditRoute(r)}>
+//                   <Pencil size={14} />
+//                 </Button>
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+
+//   </div>
+// </div>
+
   );
 }
