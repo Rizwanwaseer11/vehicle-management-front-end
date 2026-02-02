@@ -16,6 +16,7 @@ import ManageRoutes from "./pages/owner/pages/ManageRoutes";
 import { Login } from "./pages/Login";
 import LayoutEmp from "./pages/Employee/LayoutEmp";
 import LiveTracking from "./pages/owner/pages/LiveTracking";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
   //navbars locations
@@ -46,12 +47,17 @@ function App() {
             <Route path="/contact" element={<Contact />} /> */}
             <Route path="*" element={<PageNotFound />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
-  <Route path="/login" element={<Login />} />        
-            <Route path="/login" element={<Login />} />
-            {/* <Route path="/login" element={<Login />} /> */}
-            {/* ////  dash */}
+            <Route path="/login" element={<Login />} />        
             
-            <Route path="/admin" element={<Layout />}>
+            {/* ////  Admin Dashboard (Protected) */}
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Dashboard />} />
               <Route path="manage-drivers" element={<ManageDrivers />} />
               <Route path="manage-passengers" element={<ManagePassengers />} />
@@ -59,15 +65,22 @@ function App() {
               <Route path="manage-tracking" element={<LiveTracking />} />
             </Route>
 
-            {/* Employee */}
-            <Route path="/employee" element={<LayoutEmp />}>
+            {/* Employee Dashboard (Protected) */}
+            <Route 
+              path="/employee" 
+              element={
+                <ProtectedRoute requiredRole="employee">
+                  <LayoutEmp />
+                </ProtectedRoute>
+              }
+            >
               <Route
                 index
-                element={<Dashboard isEmployeePath={isEmployeePath} />}
+                element={<Dashboard isEmployeePath={true} />}
               />
-              <Route path="manage-drivers" element={<ManageDrivers isEmployeePath={isEmployeePath} />} />
-              <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={isEmployeePath} />} />
-              <Route path="manage-routes" element={<ManageRoutes isEmployeePath={isEmployeePath} />} />
+              <Route path="manage-drivers" element={<ManageDrivers isEmployeePath={true} />} />
+              <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={true} />} />
+              <Route path="manage-routes" element={<ManageRoutes isEmployeePath={true} />} />
             </Route>
           </Routes>  
         </div>
