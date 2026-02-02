@@ -111,7 +111,7 @@ export default function NavbarAdmin() {
 
           {/* Dropdown menu */}
           <div
-            className="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700 rounded-xl"
+            className="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700 rounded-xl"
             id="notification-dropdown"
           >
             <div className="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-600 dark:text-gray-300">
@@ -122,7 +122,7 @@ export default function NavbarAdmin() {
                 href="#"
                 className="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     className="w-11 h-11 rounded-full"
                     src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png"
@@ -158,7 +158,7 @@ export default function NavbarAdmin() {
                 href="#"
                 className="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     className="w-11 h-11 rounded-full"
                     src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png"
@@ -196,7 +196,7 @@ export default function NavbarAdmin() {
                 href="#"
                 className="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     className="w-11 h-11 rounded-full"
                     src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/joseph-mcfall.png"
@@ -238,7 +238,7 @@ export default function NavbarAdmin() {
                 href="#"
                 className="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     className="w-11 h-11 rounded-full"
                     src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/roberta-casas.png"
@@ -280,7 +280,7 @@ export default function NavbarAdmin() {
                 href="#"
                 className="flex py-3 px-4 hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <img
                     className="w-11 h-11 rounded-full"
                     src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/robert-brown.png"
@@ -354,7 +354,7 @@ export default function NavbarAdmin() {
           </button>
           {/* Dropdown menu */}
           <div
-            className="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
+            className="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
             id="apps-dropdown"
           >
             <div className="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-600 dark:text-gray-300">
