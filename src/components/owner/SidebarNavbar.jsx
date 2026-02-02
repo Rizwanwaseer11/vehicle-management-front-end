@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
@@ -119,73 +119,94 @@ const SidebarNavbar = () => {
           } sm:translate-x-0`}
         >
           <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
-            <ul className="space-y-2 text-sm  font-sm">
+            <ul className="space-y-4 text-sm  font-sm">
               <li>
-                <Link
+                <NavLink
                   to={"/admin"}
-                  className="flex mt-17 items-center w-full justify-between px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  end
+                  className={({ isActive }) =>
+                    `flex mt-17 items-center w-full justify-between px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
                 >
                   <House className=" w-5 h-5 " />
                   <span className="flex-1 ms-3  text-left rtl:text-right whitespace-nowrap">
                     Dashboard
                   </span>
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to={"manage-drivers"}
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
                 >
                   <CircleUser className=" w-5 h-5 " />
 
                   <span className="flex-1 ms-3 whitespace-nowrap">Drivers</span>
-                </Link>
+                </NavLink>
               </li>
               <li>
-                <Link
+                <NavLink
                   to={"manage-passengers"}
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
                 >
                   <Users className=" w-5 h-5 " />
 
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Passengers
                   </span>
-                </Link>
+                </NavLink>
               </li>
 
               {/* /////// */}
               <li>
-                <Link
+                <NavLink
                   to={"manage-tracking"}
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
                 >
                   <MapPinCheckInside className=" w-5 h-5 " />
 
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Live Tracking
                   </span>
-                </Link>
+                </NavLink>
               </li>
               {/* /// */}
               <li>
-                <Link
+                <NavLink
                   to={"manage-routes"}
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
                 >
                   <Route className=" w-5 h-5 " />
 
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Manage Routes
                   </span>
-                </Link>
+                </NavLink>
               </li>
             </ul>
-            <ul className="space-y-2 font-medium border-t-2 border-gray-300 pt-6 mt-4">
+            <ul className="space-y-4 font-medium border-t-2 border-gray-300 pt-6 mt-4">
               <li>
                 <a
                   href="#"
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group"
                 >
                   {/* <svg
                     className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
@@ -212,7 +233,7 @@ const SidebarNavbar = () => {
               <li>
                 <a
                   href="#"
-                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group"
                 >
                   {/* <svg
                     className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
@@ -235,7 +256,7 @@ const SidebarNavbar = () => {
                 </a>
               </li>
               <li>
-                <div className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                <div className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group">
                   <LogOut className="text-red-600 " />
                   <span
                     className="flex-1 ms-3 text-red-600 whitespace-nowrap cursor-pointer"
@@ -292,7 +313,7 @@ const UserDropdown = () => {
         <span className="sr-only">Open user menu</span>
         <img
           className="w-8 h-8 rounded-full"
-          src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+          src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740&q=80"
           alt="User"
         />
       </button>
@@ -307,7 +328,7 @@ const UserDropdown = () => {
             <li>
               <button
                 onClick={handleDashboardClick}
-                className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded text-left"
+                className="inline-flex items-center w-full p-2 hover:bg-gray-200 hover:text-heading rounded text-left"
               >
                 Dashboard
               </button>
@@ -315,7 +336,7 @@ const UserDropdown = () => {
             <li>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded text-left text-red-600"
+                className="inline-flex items-center w-full p-2 hover:bg-gray-200 hover:text-heading rounded text-left text-red-600"
               >
                 Log out
               </button>
