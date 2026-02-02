@@ -139,7 +139,11 @@ const ManagePassengers = ({ isEmployeePath }) => {
 
   /* ================= PAGINATION ================= */
   const totalResults = passengers.length;
-  const paginatedPassengers = passengers.slice(
+  // Sort by createdAt in descending order (newest first)
+  const sortedPassengers = [...passengers].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+  );
+  const paginatedPassengers = sortedPassengers.slice(
     (page - 1) * resultsPerPage,
     page * resultsPerPage,
   );
@@ -222,19 +226,6 @@ const ManagePassengers = ({ isEmployeePath }) => {
                 {!isEmployeePath && (
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-3">
-                      {/* <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() =>
-                          handleStatus(passenger)
-                        }
-                      >
-                        {passenger.status === "approved" ? (
-                          <Eye className="w-4 h-4" />
-                        ) : (
-                          <EyeClosed className="w-4 h-4" />
-                        )}
-                      </Button> */}
                       <Button
                         variant="ghost"
                         size="icon" // keep existing size
