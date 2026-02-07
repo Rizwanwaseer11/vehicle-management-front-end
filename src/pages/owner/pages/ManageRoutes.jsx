@@ -1138,6 +1138,39 @@ export default function ManageRoutes() {
     } catch (err) { console.error("Failed to toggle active:", err); }
   };
 
+  const renderTripStatus = (route) => {
+    const rawStatus = route?.status ?? route?.tripStatus ?? route?.routeStatus;
+    if (!rawStatus) return <span className="text-xs text-gray-400">-</span>;
+    const normalized = String(rawStatus).toLowerCase();
+    if (normalized === "scheduled") {
+      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-0">Scheduled</Badge>;
+    }
+    if (normalized === "ongoing") {
+      return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0">Ongoing</Badge>;
+    }
+    if (normalized === "completed") {
+      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0">Completed</Badge>;
+    }
+    const label = String(rawStatus)
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (m) => m.toUpperCase());
+    return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-0">{label}</Badge>;
+  };
+
+  const formatStartTime = (value) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "-";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const formatKm = (value) => {
+    if (value === null || value === undefined || value === "") return "-";
+    const num = Number(value);
+    if (Number.isNaN(num)) return "-";
+    return num;
+  };
+
   return (
     <div className="antialiased w-full min-h-screen bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-16 md:pt-20 px-4 md:px-6 lg:px-8 pl-0 md:pl-64 mt-5 pr-4 pb-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -1312,7 +1345,7 @@ export default function ManageRoutes() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[800px]">
               <thead className="bg-gray-50 dark:bg-gray-400 border-b">
-                <tr><th className="py-3 px-4 text-left font-semibold dark:text-white text-gray-600">Route</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Driver</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Bus</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Stops</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">KM</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Status</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Type</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Actions</th></tr>
+                <tr><th className="py-3 px-4 text-left font-semibold dark:text-white text-gray-600">Route</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Driver</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Bus</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Stops</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">KM</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Start Time</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Active</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Status</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Type</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Actions</th></tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {routes.map((r) => (
@@ -1321,8 +1354,15 @@ export default function ManageRoutes() {
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.driver?.name || "-"}</td>
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.bus?.number || "-"}</td>
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.stops?.length || 0}</td>
-                    <td className="text-center dark:text-gray-200 text-gray-600">{r.totalKm}</td>
-                    <td className="text-center"><div className="flex items-center justify-center gap-2"><span className={`text-xs font-semibold px-2 py-1 rounded-full ${r.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>{r.isActive ? "Active" : "Inactive"}</span><Button size="sm" variant="outline" className={`h-7 w-7 p-0 rounded-full border-0 ${r.isActive ? "bg-green-500 hover:bg-green-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-white"}`} onClick={() => toggleActive(r._id, r.isActive)} title={r.isActive ? "Deactivate" : "Activate"}><Power size={14} /></Button></div></td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{formatKm(r.totalKm)}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{formatStartTime(r.startTime)}</td>
+                    <td className="text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${r.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>{r.isActive ? "Active" : "Inactive"}</span>
+                        <Button size="sm" variant="outline" className={`h-7 w-7 p-0 rounded-full border-0 ${r.isActive ? "bg-green-500 hover:bg-green-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-white"}`} onClick={() => toggleActive(r._id, r.isActive)} title={r.isActive ? "Deactivate" : "Activate"}><Power size={14} /></Button>
+                      </div>
+                    </td>
+                    <td className="text-center">{renderTripStatus(r)}</td>
                     <td className="text-center">{r.recurrence === 'DAILY' ? (<Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100 border-0">Daily</Badge>) : r.recurrence === 'WEEKDAYS' ? (<Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0">Weekdays</Badge>) : (<span className="text-xs text-gray-400">One-Time</span>)}</td>
                     <td className="flex justify-center gap-2 py-2"><Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => handleEditRoute(r)}><Pencil className="dark:text-blue-400" size={14} /></Button><Button size="sm" variant="outline" className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-200" onClick={() => openDeleteDialog(r)}><Trash2 className="text-red-500" size={14} /></Button></td>
                   </tr>
