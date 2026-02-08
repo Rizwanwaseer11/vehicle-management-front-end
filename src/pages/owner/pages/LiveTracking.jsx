@@ -14,6 +14,7 @@ import StopPicker from "../../../components/GoogleMaps/StopPicker";
 import { io } from "socket.io-client";
 
 const API_BASE = "https://vehicle-management-ecru.vercel.app/api";
+const SOCKET_URL = "https://rich-tania-iland-drive-f5b498da.koyeb.app";
 const DEFAULT_CENTER = { lat: 24.8607, lng: 67.0011 };
 const MAP_CONTAINER_STYLE = { width: "100%", height: "100%" };
 
@@ -173,14 +174,24 @@ function LiveTracking() {
 
   useEffect(() => {
     if (!token) return;
-    const socket = io(API_BASE.replace("/api", ""), {
+    const socket = io(SOCKET_URL, {
       auth: { token, role: "admin" },
-      transports: ["websocket"],
+      transports: ["polling", "websocket"],
+      upgrade: true,
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
     });
     socketRef.current = socket;
 
     socket.on("connect", () => setSocketConnected(true));
     socket.on("disconnect", () => setSocketConnected(false));
+    socket.on("connect_error", (err) => {
+      console.error("Socket connect_error:", err.message);
+      setSocketConnected(false);
+    });
 
     socket.on("admin_fleet_update", (payload) => {
       const { tripId, lat, lng, heading, speed } = payload || {};
@@ -197,6 +208,7 @@ function LiveTracking() {
 
     return () => {
       socket.off("admin_fleet_update");
+      socket.off("connect_error");
       socket.disconnect();
       Object.values(animationsRef.current).forEach((id) =>
         cancelAnimationFrame(id),
