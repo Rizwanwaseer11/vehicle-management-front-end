@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,40 +15,39 @@ import { ToggleLeft, Eye, EyeClosed, Trash, Edit } from "lucide-react";
 import AddDriverModal from "@/components/Models/AddDriver"; // your modal component
 
 export default function ManageDrivers({ isEmployeePath }) {
-  const [drivers, setDrivers] = useState([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
   const [editDriver, setEditDriver] = useState(null); // driver to edit
   const resultsPerPage = 7;
 
   const token = localStorage.getItem("token"); // Auth token
+  const queryClient = useQueryClient();
 
   // ✅ Fetch all drivers
-  const fetchDrivers = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        "https://vehicle-management-ecru.vercel.app/api/admin/",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      const data = await res.json();
-      const drivers = data.filter((user) => user.role === "driver");
-      setDrivers(drivers || []);
-    } catch (err) {
-      console.error("Error fetching drivers", err);
-    } finally {
-      setLoading(false);
+  const fetchUsers = async ({ signal }) => {
+    const res = await fetch("https://vehicle-management-ecru.vercel.app/api/admin/", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
+    if (!res.ok) {
+      throw new Error("Failed to load users");
     }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   };
 
-  useEffect(() => {
-    fetchDrivers();
-  }, []);
+  const usersQuery = useQuery({
+    queryKey: ["admin-users", token],
+    queryFn: fetchUsers,
+    enabled: !!token,
+  });
+
+  const drivers = useMemo(
+    () => (Array.isArray(usersQuery.data) ? usersQuery.data.filter((u) => u.role === "driver") : []),
+    [usersQuery.data],
+  );
 
   const totalResults = drivers.length;
   const paginatedDrivers = drivers
@@ -66,7 +66,7 @@ export default function ManageDrivers({ isEmployeePath }) {
           },
         },
       );
-      setDrivers((prev) => prev.filter((d) => d._id !== id));
+      await queryClient.invalidateQueries({ queryKey: ["admin-users", token] });
     } catch (err) {
       console.error("Error deleting driver", err);
     }
@@ -92,12 +92,7 @@ export default function ManageDrivers({ isEmployeePath }) {
         },
       );
 
-      // Update state locally so the UI reflects change immediately
-      setDrivers((prev) =>
-        prev.map((d) =>
-          d._id === driver._id ? { ...d, status: updatedStatus } : d,
-        ),
-      );
+      await queryClient.invalidateQueries({ queryKey: ["admin-users", token] });
     } catch (err) {
       console.error("Error updating driver status", err);
     }

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,48 +13,37 @@ import {
 import { ToggleLeft, Eye, EyeClosed, Trash } from "lucide-react";
 
 const ManagePassengers = ({ isEmployeePath }) => {
-  const [passengers, setPassengers] = useState([]);
   const [page, setPage] = useState(1);
   const resultsPerPage = 7;
 
   const token = localStorage.getItem("token");
+  const queryClient = useQueryClient();
 
   /* ================= FETCH PASSENGERS ================= */
-  useEffect(() => {
-    fetchPassengers();
-  }, []);
-
-  const fetchPassengers = async () => {
-    try {
-      /**
-       * 🔴 REPLACE API URL BELOW
-       * Example: GET /api/users
-       */
-      const res = await fetch(
-        "https://vehicle-management-ecru.vercel.app/api/admin/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const data = await res.json();
-
-      /**
-       * ✅ Filter only passengers by role
-       * Backend user object should contain: role
-       */
-      const passengerUsers = Array.isArray(data)
-        ? data.filter((user) => user.role === "passenger")
-        : [];
-
-      setPassengers(passengerUsers);
-    } catch (error) {
-      console.error("Failed to fetch passengers", error);
-      setPassengers([]);
+  const fetchUsers = async ({ signal }) => {
+    const res = await fetch("https://vehicle-management-ecru.vercel.app/api/admin/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
+    if (!res.ok) {
+      throw new Error("Failed to load users");
     }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   };
+
+  const usersQuery = useQuery({
+    queryKey: ["admin-users", token],
+    queryFn: fetchUsers,
+    enabled: !!token,
+  });
+
+  const passengers = useMemo(
+    () => (Array.isArray(usersQuery.data) ? usersQuery.data.filter((user) => user.role === "passenger") : []),
+    [usersQuery.data],
+  );
 
   /* ================= DELETE PASSENGER ================= */
   const handleDelete = async (id) => {
@@ -72,7 +62,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
         },
       );
 
-      setPassengers((prev) => prev.filter((p) => p._id !== id));
+      await queryClient.invalidateQueries({ queryKey: ["admin-users", token] });
     } catch (error) {
       console.error("Failed to delete passenger", error);
     }
@@ -126,12 +116,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
         },
       );
 
-      // Update state locally so the UI reflects change immediately
-      setPassengers((prev) =>
-        prev.map((d) =>
-          d._id === driver._id ? { ...d, status: updatedStatus } : d,
-        ),
-      );
+      await queryClient.invalidateQueries({ queryKey: ["admin-users", token] });
     } catch (err) {
       console.error("Error updating Passenger status", err);
     }

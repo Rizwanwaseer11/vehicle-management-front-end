@@ -91,11 +91,7 @@
 
 export function calculateRoute(stops) {
   return new Promise((resolve, reject) => {
-    console.log("🟡 calculateRoute called");
-    console.log("🟡 Stops received:", stops);
-    
     if (!window.google || !Array.isArray(stops) || stops.length < 2) {
-      console.error("❌ Google not loaded or insufficient stops");
       reject(new Error("Google Maps not loaded or insufficient stops"));
       return;
     }
@@ -143,8 +139,6 @@ export function calculateRoute(stops) {
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
-        console.log("📡 Directions API status:", status);
-        
         if (status !== "OK" || !result?.routes?.length) {
           reject(new Error("Route calculation failed"));
           return;
@@ -154,12 +148,13 @@ export function calculateRoute(stops) {
           (sum, leg) => sum + (leg.distance?.value || 0),
           0
         );
+        const totalMiles = totalMeters / 1609.344;
 
         // ✅ FIXED HERE: Removed .points
         // overview_polyline is usually a string directly in the JS API
         resolve({
           polyline: result.routes[0].overview_polyline, 
-          totalKm: (totalMeters / 1000).toFixed(2),
+          totalKm: totalMiles.toFixed(2),
         });
       }
     );

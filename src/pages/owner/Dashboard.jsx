@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import PageTitle from "./../../components/Typography/PageTitle";
 import { Bus, User, Route, Users } from "lucide-react";
 import InfoCard from "../../components/Cards/InfoCard";
@@ -35,16 +36,6 @@ const Dashboard = ({ isEmployeePath }) => {
 export default Dashboard;
 
 const DashboardCards = ({ isEmployeePath }) => {
-  const [users, setUsers] = useState([]);
-  const [activeBuses, setActiveBuses] = useState([]);
-  const [routes, setRoutes] = useState([]);
-
-  const lastCountsRef = useRef({
-    users: 0,
-    buses: 0,
-    routes: 0,
-  });
-
   /** ===============================
    * TOKEN (ADDED)
    * =============================== */
@@ -60,9 +51,9 @@ const DashboardCards = ({ isEmployeePath }) => {
    * FETCH FUNCTIONS (TOKEN + ERROR HANDLING)
    * ===============================
    */
-  const fetchJSON = async (url) => {
+  const fetchJSON = async (url, signal) => {
     try {
-      const res = await fetch(url, { headers: authHeaders });
+      const res = await fetch(url, { headers: authHeaders, signal });
       const contentType = res.headers.get("content-type");
       if (!res.ok) {
         console.error("Fetch failed:", url, res.status, await res.text());
@@ -82,51 +73,31 @@ const DashboardCards = ({ isEmployeePath }) => {
         return [];
       }
     } catch (err) {
+      if (err?.name === "AbortError") return [];
       console.error("Dashboard API error:", err);
       return [];
     }
   };
 
-  const fetchUsers = () => fetchJSON(API.users);
-  const fetchActiveBuses = () => fetchJSON(API.activeBuses);
-  const fetchRoutes = () => fetchJSON(API.routes);
+  const usersQuery = useQuery({
+    queryKey: ["admin-users", token],
+    queryFn: ({ signal }) => fetchJSON(API.users, signal),
+    enabled: !!token,
+  });
+  const busesQuery = useQuery({
+    queryKey: ["dashboard", "buses", token],
+    queryFn: ({ signal }) => fetchJSON(API.activeBuses, signal),
+    enabled: !!token,
+  });
+  const routesQuery = useQuery({
+    queryKey: ["trips", token],
+    queryFn: ({ signal }) => fetchJSON(API.routes, signal),
+    enabled: !!token,
+  });
 
-  /**
-   * ===============================
-   * INITIAL + CONDITIONAL FETCH
-   * ===============================
-   */
- const dataLoadedRef = useRef(false);
-
-useEffect(() => {
-  const loadDashboardData = async () => {
-    if (dataLoadedRef.current) return; // prevent repeated fetch
-
-    try {
-      const [usersRes, busesRes, routesRes] = await Promise.all([
-        fetchUsers(),
-        fetchActiveBuses(),
-        fetchRoutes(),
-      ]);
-
-      setUsers(usersRes);
-      setActiveBuses(busesRes);
-      setRoutes(routesRes);
-
-      lastCountsRef.current = {
-        users: usersRes.length,
-        buses: busesRes.length,
-        routes: routesRes.length,
-      };
-
-      dataLoadedRef.current = true; // mark as loaded
-    } catch (err) {
-      console.error("Dashboard API error:", err);
-    }
-  };
-
-  if (token) loadDashboardData();
-}, [token]);
+  const users = usersQuery.data ?? [];
+  const activeBuses = busesQuery.data ?? [];
+  const routes = routesQuery.data ?? [];
   /**
    * ===============================
    * MEMOIZED COUNTS (NO RE-COMPUTE)

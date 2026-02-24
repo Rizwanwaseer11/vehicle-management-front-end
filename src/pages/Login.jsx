@@ -1,4 +1,4 @@
-import { Bus } from "lucide-react";
+import { Bus, Eye, EyeOff } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,7 @@ export const Login = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const [error, setError] = React.useState("");
 
@@ -108,16 +109,25 @@ export const Login = () => {
           />
         </div>
 
-        <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
+        <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2 pr-4">
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
-            className="border-none outline-none ring-0"
+            className="border-none outline-none ring-0 flex-1"
             value={formData.password}
             onChange={handleChange}
             required
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
         </div>
 
         <div className="mt-4 text-left text-indigo-500">

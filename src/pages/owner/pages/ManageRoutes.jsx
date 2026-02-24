@@ -835,6 +835,7 @@
 //     </div>
    
 import React, { useState, useEffect, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Pencil,
@@ -903,13 +904,14 @@ const getInitialFormState = () => ({
 // ============================================================================
 // ✅ CUSTOM SEARCH COMPONENT
 // ============================================================================
-const StopSearchInput = ({ onPlaceSelect }) => {
+const StopSearchInput = ({ onPlaceSelect, onError }) => {
   const [inputValue, setInputValue] = useState("");
   const [predictions, setPredictions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const autocompleteService = useRef(null);
   const placesService = useRef(null);
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     if (window.google && window.google.maps && window.google.maps.places) {
@@ -917,28 +919,37 @@ const StopSearchInput = ({ onPlaceSelect }) => {
       placesService.current = new window.google.maps.places.PlacesService(document.createElement("div"));
     }
   }, []);
+  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
 
   const handleInputChange = (e) => {
     const val = e.target.value;
     setInputValue(val);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
     if (!val || val.length < 3) {
       setPredictions([]);
       setIsOpen(false);
       return;
     }
-    if (autocompleteService.current) {
-      setLoading(true);
-      autocompleteService.current.getPlacePredictions({ input: val }, (results, status) => {
-        setLoading(false);
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
-          setPredictions(results);
-          setIsOpen(true);
-        } else {
-          setPredictions([]);
-          setIsOpen(false);
-        }
-      });
-    }
+    debounceRef.current = setTimeout(() => {
+      if (autocompleteService.current) {
+        setLoading(true);
+        autocompleteService.current.getPlacePredictions({ input: val }, (results, status) => {
+          setLoading(false);
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && results) {
+            setPredictions(results);
+            setIsOpen(true);
+          } else {
+            setPredictions([]);
+            setIsOpen(false);
+          }
+        });
+      } else {
+        onError?.("Google Places is not ready yet. Please try again.");
+      }
+    }, 250);
   };
 
   const handleSelect = (placeId, description) => {
@@ -954,9 +965,11 @@ const StopSearchInput = ({ onPlaceSelect }) => {
           });
           setInputValue("");
         } else {
-          alert("Could not fetch details.");
+          onError?.("Could not fetch details for this location.");
         }
       });
+    } else {
+      onError?.("Google Places is not ready yet. Please try again.");
     }
   };
 
@@ -984,15 +997,14 @@ const StopSearchInput = ({ onPlaceSelect }) => {
 export default function ManageRoutes() {
   const [open, setOpen] = useState(false);
   const [editRoute, setEditRoute] = useState(null);
-  const [routes, setRoutes] = useState([]);
-  const [drivers, setDrivers] = useState([]);
-  const [buses, setBuses] = useState([]);
+  const queryClient = useQueryClient();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState(null);
   const [routePolyline, setRoutePolyline] = useState("");
   const [isCalculating, setIsCalculating] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [pageError, setPageError] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); 
   const token = localStorage.getItem("token");
   const [form, setForm] = useState(getInitialFormState());
@@ -1028,41 +1040,60 @@ export default function ManageRoutes() {
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
+  useEffect(() => {
+    if (pageError) {
+      const timer = setTimeout(() => setPageError(""), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [pageError]);
 
   /* ================= 2. FETCH DATA ================= */
-  useEffect(() => {
-    fetchTrips();
-    fetchDrivers();
-    fetchBuses();
-  }, []);
+  const tripsQuery = useQuery({
+    queryKey: ["trips", token],
+    queryFn: async ({ signal }) => {
+      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/", { headers: { Authorization: `Bearer ${token}` }, signal });
+      if (!res.ok) throw new Error("Failed to load routes");
+      const data = await res.json();
+      return Array.isArray(data.trips) ? data.trips : [];
+    },
+    enabled: !!token,
+  });
+  const driversQuery = useQuery({
+    queryKey: ["available-drivers", token],
+    queryFn: async ({ signal }) => {
+      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-drivers", { headers: { Authorization: `Bearer ${token}` }, signal });
+      if (!res.ok) throw new Error("Failed to load drivers");
+      const data = await res.json();
+      return Array.isArray(data.drivers) ? data.drivers : [];
+    },
+    enabled: !!token,
+  });
+  const busesQuery = useQuery({
+    queryKey: ["available-buses", token],
+    queryFn: async ({ signal }) => {
+      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", { headers: { Authorization: `Bearer ${token}` }, signal });
+      if (!res.ok) throw new Error("Failed to load buses");
+      const data = await res.json();
+      return Array.isArray(data.buses) ? data.buses : [];
+    },
+    enabled: !!token,
+  });
 
-  const fetchTrips = async () => {
-    try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/", { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      setRoutes(Array.isArray(data.trips) ? data.trips : []);
-    } catch (err) { setRoutes([]); }
-  };
-  const fetchDrivers = async () => {
-    try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-drivers", { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      setDrivers(Array.isArray(data.drivers) ? data.drivers : []);
-    } catch (err) { setDrivers([]); }
-  };
-  const fetchBuses = async () => {
-    try {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      setBuses(Array.isArray(data.buses) ? data.buses : []);
-    } catch (err) { setBuses([]); }
-  };
+  const routes = tripsQuery.data ?? [];
+  const drivers = driversQuery.data ?? [];
+  const buses = busesQuery.data ?? [];
+
+  useEffect(() => {
+    if (tripsQuery.isError) {
+      setPageError("Failed to load routes. Please refresh.");
+    }
+  }, [tripsQuery.isError]);
 
   const handleAddNew = () => { setEditRoute(null); setForm(getInitialFormState()); setRoutePolyline(""); setOpen(true); setShowMap(false); };
   const handleEditRoute = (route) => { setEditRoute(route); setOpen(true); setShowMap(false); };
   
   const handleAddStop = (stopData) => {
-    if (!stopData || stopData.latitude === undefined) { alert("Invalid location data."); return; }
+    if (!stopData || stopData.latitude === undefined) { setServerError("Invalid location data."); return; }
     setForm((prev) => ({ ...prev, stops: [...(Array.isArray(prev.stops) ? prev.stops : []), { name: stopData.name, latitude: Number(stopData.latitude), longitude: Number(stopData.longitude), order: (prev.stops?.length || 0) + 1 }] }));
     setRoutePolyline("");
   };
@@ -1116,7 +1147,9 @@ export default function ManageRoutes() {
       const res = await fetch(url, { method: editRoute ? "PUT" : "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) });
       const data = await res.json();
       if (res.ok && data.success) {
-        setOpen(false); setEditRoute(null); fetchTrips(); setSuccessMessage(editRoute ? "Route updated successfully!" : "New route created successfully!");
+        setOpen(false); setEditRoute(null);
+        await queryClient.invalidateQueries({ queryKey: ["trips", token] });
+        setSuccessMessage(editRoute ? "Route updated successfully!" : "New route created successfully!");
       } else { setServerError(data.error || data.message || "Failed to save route"); }
     } catch (err) { setServerError("Network error. Please try again."); }
   };
@@ -1127,15 +1160,19 @@ export default function ManageRoutes() {
     try {
       const res = await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeToDelete._id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (res.ok && data.success) { setDeleteDialogOpen(false); setRouteToDelete(null); fetchTrips(); setSuccessMessage("Route deleted successfully."); } else { alert(data.message || "Failed to delete trip"); }
-    } catch (err) { alert("Network error while deleting"); }
+      if (res.ok && data.success) {
+        setDeleteDialogOpen(false); setRouteToDelete(null);
+        await queryClient.invalidateQueries({ queryKey: ["trips", token] });
+        setSuccessMessage("Route deleted successfully.");
+      } else { setPageError(data.message || "Failed to delete route."); }
+    } catch (err) { setPageError("Network error while deleting."); }
   };
 
   const toggleActive = async (routeId, currentStatus) => {
     try {
       await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeId}/toggle`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ isActive: !currentStatus }) });
-      fetchTrips();
-    } catch (err) { console.error("Failed to toggle active:", err); }
+      await queryClient.invalidateQueries({ queryKey: ["trips", token] });
+    } catch (err) { console.error("Failed to toggle active:", err); setPageError("Failed to update route status. Please try again."); }
   };
 
   const renderTripStatus = (route) => {
@@ -1164,16 +1201,28 @@ export default function ManageRoutes() {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const formatKm = (value) => {
+  const formatMiles = (value) => {
     if (value === null || value === undefined || value === "") return "-";
     const num = Number(value);
     if (Number.isNaN(num)) return "-";
-    return num;
+    return num.toFixed(2);
   };
+  const formatMilesWithUnit = (value) => {
+    const miles = formatMiles(value);
+    return miles === "-" ? "-" : `${miles} mi`;
+  };
+
+  const totalMilesLabel = formatMilesWithUnit(form.totalKm);
 
   return (
     <div className="antialiased w-full min-h-screen bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-16 md:pt-20 px-4 md:px-6 lg:px-8 pl-0 md:pl-64 mt-5 pr-4 pb-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {pageError && (
+          <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800 shadow-sm animate-in fade-in slide-in-from-top-2">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="font-medium">{pageError}</AlertDescription>
+          </Alert>
+        )}
         {successMessage && (
           <Alert className="bg-green-50 border-green-200 text-green-800 shadow-sm animate-in fade-in slide-in-from-top-2">
             <CheckCircle className="h-4 w-4" />
@@ -1282,7 +1331,7 @@ export default function ManageRoutes() {
               <div className="space-y-3">
                 <Label className="text-xs text-gray-500 uppercase tracking-wider font-bold">Stops Management</Label>
                 <div className="flex flex-col gap-2">
-                  <StopSearchInput onPlaceSelect={handleAddStop} />
+                  <StopSearchInput onPlaceSelect={handleAddStop} onError={setServerError} />
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={addManualStop} className="flex-1 text-xs h-9">+ Manual Stop</Button>
                     <Button variant={showMap ? "secondary" : "outline"} size="sm" onClick={() => setShowMap(!showMap)} className="flex-1 text-xs h-9 gap-1">
@@ -1320,7 +1369,7 @@ export default function ManageRoutes() {
 
               {/* CALCULATE */}
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col gap-3">
-                <div className="flex justify-between items-center"><span className="text-sm font-semibold text-blue-900">Total Distance</span><span className="text-xl font-bold text-blue-700">{form.totalKm ? `${form.totalKm} km` : "--"}</span></div>
+                <div className="flex justify-between items-center"><span className="text-sm font-semibold text-blue-900">Total Distance</span><span className="text-xl font-bold text-blue-700">{totalMilesLabel === "-" ? "--" : totalMilesLabel}</span></div>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm" disabled={isCalculating} onClick={handleCalculateRoute}>{isCalculating ? "Calculating..." : <><Calculator size={16} className="mr-2" /> Calculate Route</>}</Button>
               </div>
             </div>
@@ -1345,7 +1394,7 @@ export default function ManageRoutes() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[800px]">
               <thead className="bg-gray-50 dark:bg-gray-400 border-b">
-                <tr><th className="py-3 px-4 text-left font-semibold dark:text-white text-gray-600">Route</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Driver</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Bus</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Stops</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">KM</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Start Time</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Active</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Status</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Type</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Actions</th></tr>
+                <tr><th className="py-3 px-4 text-left font-semibold dark:text-white text-gray-600">Route</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Driver</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Bus</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Stops</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Miles</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Start Time</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Active</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Status</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Type</th><th className="py-3 px-4 text-center dark:text-white text-gray-600">Actions</th></tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {routes.map((r) => (
@@ -1354,7 +1403,7 @@ export default function ManageRoutes() {
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.driver?.name || "-"}</td>
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.bus?.number || "-"}</td>
                     <td className="text-center dark:text-gray-200 text-gray-600">{r.stops?.length || 0}</td>
-                    <td className="text-center dark:text-gray-200 text-gray-600">{formatKm(r.totalKm)}</td>
+                    <td className="text-center dark:text-gray-200 text-gray-600">{formatMiles(r.totalKm)}</td>
                     <td className="text-center dark:text-gray-200 text-gray-600">{formatStartTime(r.startTime)}</td>
                     <td className="text-center">
                       <div className="flex items-center justify-center gap-2">
