@@ -11,6 +11,7 @@ import {
   Users,
   CircleUser,
   MapPinCheckInside,
+  Bell,
 } from "lucide-react";
 
 const SidebarNavbar = () => {
@@ -198,6 +199,21 @@ const SidebarNavbar = () => {
 
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Manage Routes
+                  </span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={"notifications"}
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
+                >
+                  <Bell className=" w-5 h-5 " />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Notifications
                   </span>
                 </NavLink>
               </li>

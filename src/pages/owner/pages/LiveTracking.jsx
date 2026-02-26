@@ -12,9 +12,10 @@ import { GoogleMap, MarkerF } from "@react-google-maps/api";
 import RoutePreview from "../../../components/GoogleMaps/RoutePreview";
 import StopPicker from "../../../components/GoogleMaps/StopPicker";
 import { io } from "socket.io-client";
+import { API_BASE } from "@/lib/apiBase";
 
-const API_BASE = "https://vehicle-management-ecru.vercel.app/api";
-const SOCKET_URL = "https://rich-tania-iland-drive-f5b498da.koyeb.app";
+const SOCKET_URL =
+  import.meta.env.VITE_SOCKET_URL || "https://rich-tania-iland-drive-f5b498da.koyeb.app";
 const DEFAULT_CENTER = { lat: 24.8607, lng: 67.0011 };
 const MAP_CONTAINER_STYLE = { width: "100%", height: "100%" };
 

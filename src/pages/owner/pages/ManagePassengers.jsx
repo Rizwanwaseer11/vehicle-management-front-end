@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToggleLeft, Eye, EyeClosed, Trash } from "lucide-react";
+import { API_BASE } from "@/lib/apiBase";
 
 const ManagePassengers = ({ isEmployeePath }) => {
   const [page, setPage] = useState(1);
@@ -21,7 +22,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
 
   /* ================= FETCH PASSENGERS ================= */
   const fetchUsers = async ({ signal }) => {
-    const res = await fetch("https://vehicle-management-ecru.vercel.app/api/admin/", {
+    const res = await fetch(`${API_BASE}/admin/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -53,7 +54,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
        * Example: DELETE /api/users/:id
        */
       await fetch(
-        `https://vehicle-management-ecru.vercel.app/api/admin/${id}`,
+        `${API_BASE}/admin/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -105,7 +106,7 @@ const ManagePassengers = ({ isEmployeePath }) => {
 
       // Send request to update backend
       await fetch(
-        `https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`,
+        `${API_BASE}/admin/${driver._id}`,
         {
           method: "PUT",
           headers: {

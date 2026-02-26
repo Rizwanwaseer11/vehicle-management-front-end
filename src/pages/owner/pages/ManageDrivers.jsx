@@ -13,6 +13,7 @@ import {
 
 import { ToggleLeft, Eye, EyeClosed, Trash, Edit } from "lucide-react";
 import AddDriverModal from "@/components/Models/AddDriver"; // your modal component
+import { API_BASE } from "@/lib/apiBase";
 
 export default function ManageDrivers({ isEmployeePath }) {
   const [page, setPage] = useState(1);
@@ -24,7 +25,7 @@ export default function ManageDrivers({ isEmployeePath }) {
 
   // ✅ Fetch all drivers
   const fetchUsers = async ({ signal }) => {
-    const res = await fetch("https://vehicle-management-ecru.vercel.app/api/admin/", {
+    const res = await fetch(`${API_BASE}/admin/`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -58,7 +59,7 @@ export default function ManageDrivers({ isEmployeePath }) {
   const handleDelete = async (id) => {
     try {
       await fetch(
-        `https://vehicle-management-ecru.vercel.app/api/admin/${id}`,
+        `${API_BASE}/admin/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -81,7 +82,7 @@ export default function ManageDrivers({ isEmployeePath }) {
 
       // Send request to update backend
       await fetch(
-        `https://vehicle-management-ecru.vercel.app/api/admin/${driver._id}`,
+        `${API_BASE}/admin/${driver._id}`,
         {
           method: "PUT",
           headers: {
@@ -102,7 +103,7 @@ export default function ManageDrivers({ isEmployeePath }) {
   const handleEdit = async (id) => {
     try {
       const res = await fetch(
-        `https://vehicle-management-ecru.vercel.app/api/admin/${id}`,
+        `${API_BASE}/admin/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

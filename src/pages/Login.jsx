@@ -1,6 +1,7 @@
 import { Bus, Eye, EyeOff } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "@/lib/apiBase";
 
 export const Login = () => {
   const [state, setState] = React.useState("login");
@@ -19,14 +20,11 @@ export const Login = () => {
   setError("");
 
   try {
-    const response = await fetch(
-      "https://vehicle-management-ecru.vercel.app/api/auth/login",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      }
-    );
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
     const data = await response.json();
 

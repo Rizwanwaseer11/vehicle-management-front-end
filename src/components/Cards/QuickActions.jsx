@@ -227,6 +227,7 @@
 
 import { useState } from "react";
 import { Plus, Bus, Route, Bell } from "lucide-react";
+import { API_BASE } from "@/lib/apiBase";
 
 // shadcn/ui
 import {
@@ -266,7 +267,7 @@ const handleAddBus = async () => {
 
     const token = localStorage.getItem("token");
 
-    const response = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/createBus", {
+    const response = await fetch(`${API_BASE}/buses/createBus`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -882,6 +882,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { API_BASE } from "@/lib/apiBase";
 
 // ✅ Import your Map Components (Unchanged)
 import BaseMap from "@/components/GoogleMaps/BaseMap";
@@ -1051,7 +1052,7 @@ export default function ManageRoutes() {
   const tripsQuery = useQuery({
     queryKey: ["trips", token],
     queryFn: async ({ signal }) => {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/", { headers: { Authorization: `Bearer ${token}` }, signal });
+      const res = await fetch(`${API_BASE}/trips/`, { headers: { Authorization: `Bearer ${token}` }, signal });
       if (!res.ok) throw new Error("Failed to load routes");
       const data = await res.json();
       return Array.isArray(data.trips) ? data.trips : [];
@@ -1061,7 +1062,7 @@ export default function ManageRoutes() {
   const driversQuery = useQuery({
     queryKey: ["available-drivers", token],
     queryFn: async ({ signal }) => {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/trips/available-drivers", { headers: { Authorization: `Bearer ${token}` }, signal });
+      const res = await fetch(`${API_BASE}/trips/available-drivers`, { headers: { Authorization: `Bearer ${token}` }, signal });
       if (!res.ok) throw new Error("Failed to load drivers");
       const data = await res.json();
       return Array.isArray(data.drivers) ? data.drivers : [];
@@ -1071,7 +1072,7 @@ export default function ManageRoutes() {
   const busesQuery = useQuery({
     queryKey: ["available-buses", token],
     queryFn: async ({ signal }) => {
-      const res = await fetch("https://vehicle-management-ecru.vercel.app/api/buses/available-buses", { headers: { Authorization: `Bearer ${token}` }, signal });
+      const res = await fetch(`${API_BASE}/buses/available-buses`, { headers: { Authorization: `Bearer ${token}` }, signal });
       if (!res.ok) throw new Error("Failed to load buses");
       const data = await res.json();
       return Array.isArray(data.buses) ? data.buses : [];
@@ -1142,7 +1143,7 @@ export default function ManageRoutes() {
     const [hours, minutes] = form.startTime.split(":");
     today.setHours(hours, minutes, 0, 0); 
     const payload = { ...form, totalKm: Number(form.totalKm), stops: (Array.isArray(form.stops) ? form.stops : []).map((s) => ({ name: s.name, latitude: Number(s.latitude), longitude: Number(s.longitude), order: Number(s.order) })), startTime: today.toISOString(), routePolyline: routePolyline, recurrence: form.recurrence };
-    const url = editRoute ? `https://vehicle-management-ecru.vercel.app/api/trips/${editRoute._id}` : "https://vehicle-management-ecru.vercel.app/api/trips/";
+    const url = editRoute ? `${API_BASE}/trips/${editRoute._id}` : `${API_BASE}/trips/`;
     try {
       const res = await fetch(url, { method: editRoute ? "PUT" : "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) });
       const data = await res.json();
@@ -1158,7 +1159,7 @@ export default function ManageRoutes() {
   const handleDelete = async () => {
     if (!routeToDelete) return;
     try {
-      const res = await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeToDelete._id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API_BASE}/trips/${routeToDelete._id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok && data.success) {
         setDeleteDialogOpen(false); setRouteToDelete(null);
@@ -1170,7 +1171,7 @@ export default function ManageRoutes() {
 
   const toggleActive = async (routeId, currentStatus) => {
     try {
-      await fetch(`https://vehicle-management-ecru.vercel.app/api/trips/${routeId}/toggle`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ isActive: !currentStatus }) });
+      await fetch(`${API_BASE}/trips/${routeId}/toggle`, { method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ isActive: !currentStatus }) });
       await queryClient.invalidateQueries({ queryKey: ["trips", token] });
     } catch (err) { console.error("Failed to toggle active:", err); setPageError("Failed to update route status. Please try again."); }
   };

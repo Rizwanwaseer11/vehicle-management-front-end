@@ -4,6 +4,7 @@ import PageTitle from "./../../components/Typography/PageTitle";
 import { Bus, User, Route, Users } from "lucide-react";
 import InfoCard from "../../components/Cards/InfoCard";
 import QuickActions from "../../components/Cards/QuickActions";
+import { API_BASE } from "@/lib/apiBase";
 
 /**
  * ===============================
@@ -11,10 +12,10 @@ import QuickActions from "../../components/Cards/QuickActions";
  * ===============================
  */
 const API = {
-  users: "https://vehicle-management-ecru.vercel.app/api/admin/", // returns ALL users
-  activeBuses: "https://vehicle-management-ecru.vercel.app/api/buses/",
-  routes: "https://vehicle-management-ecru.vercel.app/api/trips/",
-  trips: "https://vehicle-management-ecru.vercel.app/api/trips",
+  users: `${API_BASE}/admin/`, // returns ALL users
+  activeBuses: `${API_BASE}/buses/`,
+  routes: `${API_BASE}/trips/`,
+  trips: `${API_BASE}/trips`,
 };
 
 const Dashboard = ({ isEmployeePath }) => {
