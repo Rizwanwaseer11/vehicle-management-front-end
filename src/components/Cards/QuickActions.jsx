@@ -253,6 +253,9 @@ const QuickActions = () => {
 const [busModel, setBusModel] = useState("");
 const [busSeating, setBusSeating] = useState("");
 const [busLoading, setBusLoading] = useState(false);
+const [alertTitle, setAlertTitle] = useState("");
+const [alertMessage, setAlertMessage] = useState("");
+const [alertLoading, setAlertLoading] = useState(false);
 
 
 //handle bus form submission
@@ -302,6 +305,42 @@ const handleAddBus = async () => {
   }
 };
 
+const handleSendAlert = async () => {
+  if (!alertTitle.trim()) return alert("Alert title is required");
+  if (!alertMessage.trim()) return alert("Alert message is required");
+
+  try {
+    setAlertLoading(true);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_BASE}/notifications`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({
+        title: alertTitle.trim(),
+        body: alertMessage.trim(),
+        sendToAll: true,
+        priority: "high",
+        data: { type: "ADMIN_ALERT" },
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      return alert(data.message || "Failed to send alert");
+    }
+    alert("Alert sent successfully");
+    setAlertTitle("");
+    setAlertMessage("");
+    closeModal();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to send alert");
+  } finally {
+    setAlertLoading(false);
+  }
+};
 
   const openModal = (type) => {
     setModalType(type);
@@ -418,12 +457,21 @@ const handleAddBus = async () => {
             <div className="space-y-4 mt-4">
               <div>
                 <Label>Alert Title</Label>
-                <Input placeholder="Enter title" />
+                <Input
+                  placeholder="Enter title"
+                  value={alertTitle}
+                  onChange={(e) => setAlertTitle(e.target.value)}
+                />
               </div>
 
               <div>
                 <Label>Message</Label>
-                <Textarea rows="4" placeholder="Write your alert message..." />
+                <Textarea
+                  rows="4"
+                  placeholder="Write your alert message..."
+                  value={alertMessage}
+                  onChange={(e) => setAlertMessage(e.target.value)}
+                />
               </div>
             </div>
           </>
@@ -477,9 +525,18 @@ const handleAddBus = async () => {
             <Button variant="outline" onClick={closeModal}>
               Cancel
             </Button>
-             <Button onClick={modalType === "bus" ? handleAddBus : null} disabled={busLoading}>
-    {busLoading ? "Saving..." : "Submit"}
-  </Button>
+            <Button
+              onClick={
+                modalType === "bus"
+                  ? handleAddBus
+                  : modalType === "alert"
+                  ? handleSendAlert
+                  : null
+              }
+              disabled={busLoading || alertLoading}
+            >
+              {busLoading || alertLoading ? "Saving..." : "Submit"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -14,7 +14,9 @@ import ManageDrivers from "./pages/owner/pages/ManageDrivers";
 import ManagePassengers from "./pages/owner/pages/ManagePassengers";
 import ManageRoutes from "./pages/owner/pages/ManageRoutes";
 import Notifications from "./pages/owner/pages/Notifications";
+import AccountSettings from "./pages/owner/pages/AccountSettings";
 import { Login } from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import LayoutEmp from "./pages/Employee/LayoutEmp";
 import LiveTracking from "./pages/owner/pages/LiveTracking";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -49,6 +51,7 @@ function App() {
             <Route path="*" element={<PageNotFound />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />        
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             
             {/* ////  Admin Dashboard (Protected) */}
             <Route 
@@ -65,6 +68,7 @@ function App() {
               <Route path="manage-routes" element={<ManageRoutes />} />
               <Route path="manage-tracking" element={<LiveTracking />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="account-settings" element={<AccountSettings />} />
             </Route>
 
             {/* Employee Dashboard (Protected) */}
@@ -84,6 +88,7 @@ function App() {
               <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={true} />} />
               <Route path="manage-routes" element={<ManageRoutes isEmployeePath={true} />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="account-settings" element={<AccountSettings />} />
             </Route>
           </Routes>  
         </div>

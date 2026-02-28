@@ -34,7 +34,18 @@ export const Login = () => {
     }
 
     // ✅ API RESPONSE STRUCTURE FIX
-    const { token, role, name, email, _id } = data;
+    const {
+      token,
+      role,
+      name,
+      email,
+      _id,
+      phone,
+      roomNumber,
+      jobSite,
+      homeAddress,
+      licenseNumber
+    } = data;
 
     if (!token) {
       setError("Authentication token missing");
@@ -52,7 +63,12 @@ export const Login = () => {
       _id,
       name,
       email,
+      phone,
       role,
+      roomNumber,
+      jobSite,
+      homeAddress,
+      licenseNumber
     };
 
     // ✅ STORE AUTH DATA
@@ -129,7 +145,11 @@ export const Login = () => {
         </div>
 
         <div className="mt-4 text-left text-indigo-500">
-          <button className="text-sm cursor-pointer" type="reset">
+          <button
+            className="text-sm cursor-pointer"
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+          >
             Forget password?
           </button>
         </div>

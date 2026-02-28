@@ -163,6 +163,12 @@ const ManagePassengers = ({ isEmployeePath }) => {
                 Phone
               </TableHead>
               <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
+                Room No
+              </TableHead>
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
+                Job Site
+              </TableHead>
+              <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
                 Route
               </TableHead>
               <TableHead className="bg-gray-100 p-2 dark:bg-muted/60">
@@ -187,6 +193,8 @@ const ManagePassengers = ({ isEmployeePath }) => {
                 </TableCell>
                 <TableCell>{passenger.email || "-"}</TableCell>
                 <TableCell>{passenger.phone}</TableCell>
+                <TableCell>{passenger.roomNumber || "-"}</TableCell>
+                <TableCell>{passenger.jobSite || "-"}</TableCell>
                 <TableCell>{passenger.route || "-"}</TableCell>
                 <TableCell>
                   {passenger.createdAt

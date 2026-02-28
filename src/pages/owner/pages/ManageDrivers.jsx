@@ -152,6 +152,12 @@ export default function ManageDrivers({ isEmployeePath }) {
                 Phone
               </TableHead>
               <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                Home Address
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
+                License No
+              </TableHead>
+              <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
                 Route
               </TableHead>
               <TableHead className="bg-gray-100 p-4 dark:bg-gray-500">
@@ -174,6 +180,8 @@ export default function ManageDrivers({ isEmployeePath }) {
                 <TableCell className="font-medium p-5">{driver.name}</TableCell>
                 <TableCell>{driver.email}</TableCell>
                 <TableCell>{driver.phone}</TableCell>
+                <TableCell>{driver.homeAddress || "-"}</TableCell>
+                <TableCell>{driver.licenseNumber || "-"}</TableCell>
                 <TableCell>{driver.route}</TableCell>
 
                 <TableCell>

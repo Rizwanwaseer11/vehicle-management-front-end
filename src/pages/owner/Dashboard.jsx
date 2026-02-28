@@ -16,6 +16,7 @@ const API = {
   activeBuses: `${API_BASE}/buses/`,
   routes: `${API_BASE}/trips/`,
   trips: `${API_BASE}/trips`,
+  notifications: `${API_BASE}/notifications`,
 };
 
 const Dashboard = ({ isEmployeePath }) => {
@@ -175,14 +176,37 @@ const DashboardCards = ({ isEmployeePath }) => {
  * ===============================
  */
 const Cards = ({ isEmployeePath }) => {
-  const activities = [
-    { time: "10:30 AM", text: "Bus #7 completed Route A", type: "success" },
-    { time: "10:15 AM", text: "Driver John Smith started Route B", type: "info" },
-    { time: "09:45 AM", text: "Delay reported on Route C - 10 mins", type: "warning" },
-    { time: "09:30 AM", text: "Bus #3 maintenance scheduled", type: "info" },
-    { time: "09:30 AM", text: "Bus #3 maintenance scheduled", type: "info" },
-    { time: "09:30 AM", text: "Bus #3 maintenance scheduled", type: "info" },
-  ];
+  const token = localStorage.getItem("token");
+
+  const fetchNotifications = async ({ signal }) => {
+    const res = await fetch(API.notifications, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
+    if (!res.ok) {
+      return [];
+    }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  };
+
+  const notificationsQuery = useQuery({
+    queryKey: ["notifications", token],
+    queryFn: fetchNotifications,
+    enabled: !!token,
+  });
+
+  const activities = useMemo(() => {
+    const list = notificationsQuery.data ?? [];
+    return list.slice(0, 6).map((n) => ({
+      id: n._id,
+      text: n.body || n.title || "Notification",
+      time: n.createdAt ? new Date(n.createdAt).toLocaleString() : "",
+    }));
+  }, [notificationsQuery.data]);
 
   return (
     <>
@@ -194,18 +218,22 @@ const Cards = ({ isEmployeePath }) => {
             Latest transportation updates
           </p>
           <div className="space-y-4">
-            {activities.map((activity, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-3 pb-3 border-b border-gray-200 dark:border-gray-600 last:border-0 last:pb-0"
-              >
-                <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
-                <div className="flex-1">
-                  <p className="text-gray-800 dark:text-gray-300 text-sm">{activity.text}</p>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">{activity.time}</p>
+            {activities.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">No recent activity yet.</p>
+            ) : (
+              activities.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start gap-3 pb-3 border-b border-gray-200 dark:border-gray-600 last:border-0 last:pb-0"
+                >
+                  <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+                  <div className="flex-1">
+                    <p className="text-gray-800 dark:text-gray-300 text-sm">{activity.text}</p>
+                    <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">{activity.time}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

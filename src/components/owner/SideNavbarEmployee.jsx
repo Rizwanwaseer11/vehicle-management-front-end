@@ -1,12 +1,48 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import { LogOut, Bus, House, Route, Users, CircleUser, Bell } from "lucide-react";
+import { LogOut, Bus, House, Route, Users, CircleUser, Bell, Settings } from "lucide-react";
+import { API_BASE } from "@/lib/apiBase";
 
 const SideNavbarEmployee = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const notifRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    const loadNotifications = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/notifications`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        setNotifications(Array.isArray(data) ? data.slice(0, 5) : []);
+      } catch (e) {
+        setNotifications([]);
+      }
+    };
+    loadNotifications();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <>
@@ -49,23 +85,62 @@ const SideNavbarEmployee = () => {
             <ThemeToggle />
 
             {/* Notifications */}
-            <button
-              type="button"
-              data-dropdown-toggle="notification-dropdown"
-              className="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-            >
-              <span className="sr-only">View notifications</span>
-              {/* Bell icon */}
-              <svg
-                aria-hidden="true"
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="relative" ref={notifRef}>
+              <button
+                type="button"
+                onClick={() => setNotifOpen((prev) => !prev)}
+                className="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
               >
-                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-              </svg>
-            </button>
+                <span className="sr-only">View notifications</span>
+                <div className="relative">
+                  <svg
+                    aria-hidden="true"
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                  </svg>
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full w-4 h-4">
+                      {notifications.length}
+                    </span>
+                  )}
+                </div>
+              </button>
+
+              {notifOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-lg z-50 overflow-hidden">
+                  <div className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-600">
+                    Notifications
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300">
+                        No notifications yet.
+                      </div>
+                    ) : (
+                      notifications.map((n) => (
+                        <div key={n._id} className="px-4 py-3 border-b border-gray-100 dark:border-gray-600">
+                          <p className="text-sm text-gray-800 dark:text-gray-100">{n.title}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{n.body}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setNotifOpen(false);
+                      navigate("/employee/notifications");
+                    }}
+                    className="w-full text-center py-2 text-sm text-indigo-600 dark:text-indigo-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    View all
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Dropdown menu */}
 
@@ -158,6 +233,17 @@ const SideNavbarEmployee = () => {
                   <Bell className=" w-5 h-5 " />
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Notifications
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"account-settings"}
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                >
+                  <Settings className=" w-5 h-5 " />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Account Settings
                   </span>
                 </Link>
               </li>
