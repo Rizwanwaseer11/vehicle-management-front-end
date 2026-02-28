@@ -13,7 +13,9 @@ import Dashboard from "./pages/owner/Dashboard";
 import ManageDrivers from "./pages/owner/pages/ManageDrivers";
 import ManagePassengers from "./pages/owner/pages/ManagePassengers";
 import ManageRoutes from "./pages/owner/pages/ManageRoutes";
+import ManageBuses from "./pages/owner/pages/ManageBuses";
 import Notifications from "./pages/owner/pages/Notifications";
+import NotificationCenter from "./pages/owner/pages/NotificationCenter";
 import AccountSettings from "./pages/owner/pages/AccountSettings";
 import { Login } from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -63,11 +65,13 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
+              <Route path="manage-buses" element={<ManageBuses />} />
               <Route path="manage-drivers" element={<ManageDrivers />} />
               <Route path="manage-passengers" element={<ManagePassengers />} />
               <Route path="manage-routes" element={<ManageRoutes />} />
               <Route path="manage-tracking" element={<LiveTracking />} />
-              <Route path="notifications" element={<Notifications />} />
+              <Route path="push-notifications" element={<Notifications />} />
+              <Route path="notification-center" element={<NotificationCenter />} />
               <Route path="account-settings" element={<AccountSettings />} />
             </Route>
 
@@ -84,10 +88,12 @@ function App() {
                 index
                 element={<Dashboard isEmployeePath={true} />}
               />
+              <Route path="manage-buses" element={<ManageBuses isEmployeePath={true} />} />
               <Route path="manage-drivers" element={<ManageDrivers isEmployeePath={true} />} />
               <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={true} />} />
               <Route path="manage-routes" element={<ManageRoutes isEmployeePath={true} />} />
-              <Route path="notifications" element={<Notifications />} />
+              <Route path="push-notifications" element={<Notifications />} />
+              <Route path="notification-center" element={<NotificationCenter />} />
               <Route path="account-settings" element={<AccountSettings />} />
             </Route>
           </Routes>  

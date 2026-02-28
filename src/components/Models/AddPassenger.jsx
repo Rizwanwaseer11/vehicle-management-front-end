@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -13,17 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { API_BASE } from "@/lib/apiBase";
 
-export default function AddDriverModal({ onCreated }) {
+export default function AddPassengerModal({ onCreated }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
-    homeAddress: "",
-    licenseNumber: "",
+    roomNumber: "",
+    jobSite: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const updateField = (key, value) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -34,8 +32,8 @@ export default function AddDriverModal({ onCreated }) {
       email: "",
       phone: "",
       password: "",
-      homeAddress: "",
-      licenseNumber: "",
+      roomNumber: "",
+      jobSite: "",
     });
   };
 
@@ -43,8 +41,8 @@ export default function AddDriverModal({ onCreated }) {
     if (!form.name || !form.email || !form.phone || !form.password) {
       return alert("Name, email, phone, and password are required.");
     }
-    if (!form.homeAddress || !form.licenseNumber) {
-      return alert("Home address and license number are required.");
+    if (!form.roomNumber || !form.jobSite) {
+      return alert("Room number and job site are required for passengers.");
     }
 
     try {
@@ -61,20 +59,20 @@ export default function AddDriverModal({ onCreated }) {
           email: form.email.trim(),
           phone: form.phone.trim(),
           password: form.password,
-          role: "driver",
-          homeAddress: form.homeAddress.trim(),
-          licenseNumber: form.licenseNumber.trim(),
+          role: "passenger",
+          roomNumber: form.roomNumber.trim(),
+          jobSite: form.jobSite.trim(),
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        return alert(data.message || "Failed to create driver");
+        return alert(data.message || "Failed to create passenger");
       }
       resetForm();
       setOpen(false);
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create driver");
+      alert("Failed to create passenger");
     } finally {
       setLoading(false);
     }
@@ -82,80 +80,70 @@ export default function AddDriverModal({ onCreated }) {
 
   return (
     <div className="w-full">
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-4">
-        <Button onClick={() => setOpen(true)} className="px-4 py-6 flex items-center gap-2">
-          <Plus className="w-4 h-4" /> Add Driver
-        </Button>
-      </div>
+      <Button onClick={() => setOpen(true)} className="px-4 py-6 flex items-center gap-2">
+        Add Passenger
+      </Button>
 
-      {/* Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Add New Driver</DialogTitle>
-            <DialogDescription>Enter driver information</DialogDescription>
+            <DialogTitle>Add Passenger</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Driver Name</Label>
+              <Label htmlFor="p-name">Full Name</Label>
               <Input
-                id="name"
+                id="p-name"
                 placeholder="Enter name"
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="p-email">Email</Label>
               <Input
-                id="email"
+                id="p-email"
                 placeholder="Enter email"
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="p-phone">Phone</Label>
               <Input
-                id="phone"
-                placeholder="+1 234-567-8900"
+                id="p-phone"
+                placeholder="Enter phone"
                 value={form.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="p-password">Password</Label>
               <Input
-                id="password"
+                id="p-password"
                 type="password"
                 placeholder="Temporary password"
                 value={form.password}
                 onChange={(e) => updateField("password", e.target.value)}
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="homeAddress">Home Address</Label>
+              <Label htmlFor="p-room">Room Number</Label>
               <Input
-                id="homeAddress"
-                placeholder="Driver home address"
-                value={form.homeAddress}
-                onChange={(e) => updateField("homeAddress", e.target.value)}
+                id="p-room"
+                placeholder="Room number"
+                value={form.roomNumber}
+                onChange={(e) => updateField("roomNumber", e.target.value)}
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="licenseNumber">License Number</Label>
+              <Label htmlFor="p-job">Job Site</Label>
               <Input
-                id="licenseNumber"
-                placeholder="License number"
-                value={form.licenseNumber}
-                onChange={(e) => updateField("licenseNumber", e.target.value)}
+                id="p-job"
+                placeholder="Job site"
+                value={form.jobSite}
+                onChange={(e) => updateField("jobSite", e.target.value)}
               />
             </div>
           </div>
@@ -165,7 +153,7 @@ export default function AddDriverModal({ onCreated }) {
               Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={loading}>
-              {loading ? "Saving..." : "Create Driver"}
+              {loading ? "Saving..." : "Create Passenger"}
             </Button>
           </DialogFooter>
         </DialogContent>

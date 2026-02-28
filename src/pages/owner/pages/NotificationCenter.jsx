@@ -21,6 +21,9 @@ const NotificationCenter = () => {
   const markSeen = () => {
     const now = new Date().toISOString();
     localStorage.setItem(lastSeenKey, now);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("notifications:seen"));
+    }
   };
 
   const loadNotifications = async () => {

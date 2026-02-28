@@ -130,7 +130,9 @@ export default function ManageDrivers({ isEmployeePath }) {
           </p>
         </div>
         <div className="mb-0">
-          {!isEmployeePath && <AddDriverModal driver={editDriver} />}
+          {!isEmployeePath && (
+            <AddDriverModal onCreated={() => queryClient.invalidateQueries({ queryKey: ["admin-users", token] })} />
+          )}
         </div>
       </div>
 

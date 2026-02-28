@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToggleLeft, Eye, EyeClosed, Trash } from "lucide-react";
+import AddPassengerModal from "@/components/Models/AddPassenger";
 import { API_BASE } from "@/lib/apiBase";
 
 const ManagePassengers = ({ isEmployeePath }) => {
@@ -146,6 +147,11 @@ const ManagePassengers = ({ isEmployeePath }) => {
             View and manage registered passengers
           </p>
         </div>
+        {!isEmployeePath && (
+          <div>
+            <AddPassengerModal onCreated={() => queryClient.invalidateQueries({ queryKey: ["admin-users", token] })} />
+          </div>
+        )}
       </div>
 
       {/* Table */}

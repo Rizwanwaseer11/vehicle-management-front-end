@@ -226,6 +226,7 @@
 
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Bus, Route, Bell } from "lucide-react";
 import { API_BASE } from "@/lib/apiBase";
 
@@ -247,6 +248,7 @@ import { Card } from "../../components/ui/card";
 const QuickActions = () => {
   const [modalType, setModalType] = useState(null);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Ading bus model state
   const [busNumber, setBusNumber] = useState("");
@@ -505,7 +507,11 @@ const handleSendAlert = async () => {
           <ActionButton
             icon={<Route className="w-5 h-5" />}
             label="New Route"
-            onClick={() => openModal("route")}
+            onClick={() => {
+              setOpen(false);
+              setModalType(null);
+              navigate("/admin/manage-routes");
+            }}
           />
 
           <ActionButton

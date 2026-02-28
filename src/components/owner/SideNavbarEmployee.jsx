@@ -10,6 +10,7 @@ const SideNavbarEmployee = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const notifRef = useRef(null);
   const navigate = useNavigate();
 
@@ -26,9 +27,27 @@ const SideNavbarEmployee = () => {
         });
         if (!res.ok) return;
         const data = await res.json();
-        setNotifications(Array.isArray(data) ? data.slice(0, 5) : []);
+        const list = Array.isArray(data) ? data : [];
+        setNotifications(list.slice(0, 5));
+
+        const roleKey = (() => {
+          try {
+            const user = JSON.parse(localStorage.getItem("user") || "{}");
+            return user?.role || "employee";
+          } catch {
+            return "employee";
+          }
+        })();
+        const lastSeenKey = `notifications_last_seen_${roleKey}`;
+        const lastSeenRaw = localStorage.getItem(lastSeenKey);
+        const lastSeen = lastSeenRaw ? new Date(lastSeenRaw) : null;
+        const unread = lastSeen
+          ? list.filter((n) => n.createdAt && new Date(n.createdAt) > lastSeen).length
+          : list.length;
+        setUnreadCount(unread);
       } catch (e) {
         setNotifications([]);
+        setUnreadCount(0);
       }
     };
     loadNotifications();
@@ -42,6 +61,14 @@ const SideNavbarEmployee = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleSeen = () => {
+      setUnreadCount(0);
+    };
+    window.addEventListener("notifications:seen", handleSeen);
+    return () => window.removeEventListener("notifications:seen", handleSeen);
   }, []);
 
   return (
@@ -102,9 +129,9 @@ const SideNavbarEmployee = () => {
                   >
                     <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
                   </svg>
-                  {notifications.length > 0 && (
+                  {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full w-4 h-4">
-                      {notifications.length}
+                      {unreadCount}
                     </span>
                   )}
                 </div>
@@ -131,8 +158,18 @@ const SideNavbarEmployee = () => {
                   </div>
                   <button
                     onClick={() => {
+                      const roleKey = (() => {
+                        try {
+                          const user = JSON.parse(localStorage.getItem("user") || "{}");
+                          return user?.role || "employee";
+                        } catch {
+                          return "employee";
+                        }
+                      })();
+                      localStorage.setItem(`notifications_last_seen_${roleKey}`, new Date().toISOString());
+                      setUnreadCount(0);
                       setNotifOpen(false);
-                      navigate("/employee/notifications");
+                      navigate("/employee/notification-center");
                     }}
                     className="w-full text-center py-2 text-sm text-indigo-600 dark:text-indigo-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
@@ -212,7 +249,17 @@ const SideNavbarEmployee = () => {
                   </span>
                 </Link>
               </li>
-              
+              <li>
+                <Link
+                  to={"manage-buses"}
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                >
+                  <Bus className=" w-5 h-5 " />
+
+                  <span className="flex-1 ms-3 whitespace-nowrap">Buses</span>
+                </Link>
+              </li>
+               
               <li>
                 <Link
                   to={"manage-routes"}
@@ -227,12 +274,23 @@ const SideNavbarEmployee = () => {
               </li>
               <li>
                 <Link
-                  to={"notifications"}
+                  to={"notification-center"}
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
                 >
                   <Bell className=" w-5 h-5 " />
                   <span className="flex-1 ms-3 whitespace-nowrap">
-                    Notifications
+                    Notification Center
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"push-notifications"}
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                >
+                  <Bell className=" w-5 h-5 " />
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Push Notifications
                   </span>
                 </Link>
               </li>
