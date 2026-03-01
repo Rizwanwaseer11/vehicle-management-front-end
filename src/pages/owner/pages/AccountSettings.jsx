@@ -102,17 +102,21 @@ const AccountSettings = () => {
 
   return (
     <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800/95 md:ml-64 pt-16 md:pt-20 px-4 md:px-6 lg:px-8 mt-4 pb-6">
-      <div className="max-w-3xl mx-auto bg-white border border-default rounded-xl p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-heading">Account Settings</h1>
-        <p className="text-sm text-body mt-1">
+      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-700/80 border border-default dark:border-gray-600 rounded-xl p-6 shadow-sm">
+        <h1 className="text-2xl font-semibold text-heading dark:text-gray-100">
+          Account Settings
+        </h1>
+        <p className="text-sm text-body mt-1 dark:text-gray-300">
           Update your profile details and manage your password.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-heading mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
+              Full Name
+            </label>
             <input
-              className="w-full border border-default rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
               value={form.name}
               onChange={(e) => updateField("name", e.target.value)}
               required
@@ -120,10 +124,12 @@ const AccountSettings = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-heading mb-1">Email</label>
+            <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
+              Email
+            </label>
             <input
               type="email"
-              className="w-full border border-default rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
               required
@@ -131,9 +137,11 @@ const AccountSettings = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-heading mb-1">Phone</label>
+            <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
+              Phone
+            </label>
             <input
-              className="w-full border border-default rounded-lg px-3 py-2 text-sm"
+              className="w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:text-gray-100"
               value={form.phone}
               onChange={(e) => updateField("phone", e.target.value)}
             />
@@ -142,28 +150,28 @@ const AccountSettings = () => {
           <button
             type="button"
             onClick={() => setChangePassword((prev) => !prev)}
-            className="text-sm font-semibold text-indigo-600"
+            className="text-sm font-semibold text-indigo-600 dark:text-indigo-300"
           >
             {changePassword ? "Cancel password change" : "Change password"}
           </button>
 
           {changePassword && (
-            <div className="space-y-4 rounded-lg border border-default p-4">
+            <div className="space-y-4 rounded-lg border border-default dark:border-gray-600 dark:bg-gray-800/60 p-4">
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">
+                <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
                   Current Password
                 </label>
-                <div className="flex items-center w-full border border-default rounded-lg px-3 py-2 text-sm">
+                <div className="flex items-center w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800">
                   <input
                     type={showCurrent ? "text" : "password"}
-                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none"
+                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-gray-100"
                     value={form.currentPassword}
                     onChange={(e) => updateField("currentPassword", e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCurrent((prev) => !prev)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
                     aria-label={showCurrent ? "Hide password" : "Show password"}
                     aria-pressed={showCurrent}
                   >
@@ -173,20 +181,20 @@ const AccountSettings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">
+                <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
                   New Password
                 </label>
-                <div className="flex items-center w-full border border-default rounded-lg px-3 py-2 text-sm">
+                <div className="flex items-center w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800">
                   <input
                     type={showNew ? "text" : "password"}
-                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none"
+                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-gray-100"
                     value={form.newPassword}
                     onChange={(e) => updateField("newPassword", e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNew((prev) => !prev)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
                     aria-label={showNew ? "Hide password" : "Show password"}
                     aria-pressed={showNew}
                   >
@@ -196,20 +204,20 @@ const AccountSettings = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-heading mb-1">
+                <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
                   Confirm New Password
                 </label>
-                <div className="flex items-center w-full border border-default rounded-lg px-3 py-2 text-sm">
+                <div className="flex items-center w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800">
                   <input
                     type={showConfirm ? "text" : "password"}
-                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none"
+                    className="w-full border-0 p-0 text-sm focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-gray-100"
                     value={form.confirmPassword}
                     onChange={(e) => updateField("confirmPassword", e.target.value)}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirm((prev) => !prev)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
                     aria-label={showConfirm ? "Hide password" : "Show password"}
                     aria-pressed={showConfirm}
                   >
@@ -224,8 +232,8 @@ const AccountSettings = () => {
             <div
               className={`text-sm rounded-lg px-3 py-2 ${
                 status.type === "success"
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-red-50 text-red-700 border border-red-200"
+                  ? "bg-green-50 text-green-700 border border-green-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-700/40"
+                  : "bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700/40"
               }`}
             >
               {status.message}

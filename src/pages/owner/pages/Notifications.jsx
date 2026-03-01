@@ -116,7 +116,7 @@ const Notifications = () => {
 
           <div>
             <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-2">Target</label>
-            <div className="flex flex-wrap gap-4 text-sm">
+            <div className="flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-200">
               {[
                 { value: "all", label: "All Users" },
                 { value: "roles", label: "By Role" },
@@ -128,6 +128,7 @@ const Notifications = () => {
                     value={opt.value}
                     checked={target === opt.value}
                     onChange={() => setTarget(opt.value)}
+                    className="accent-indigo-600 dark:accent-indigo-400"
                   />
                   {opt.label}
                 </label>
@@ -138,13 +139,14 @@ const Notifications = () => {
           {target === "roles" && (
             <div>
             <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-2">Roles</label>
-              <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex flex-wrap gap-4 text-sm text-gray-700 dark:text-gray-200">
                 {roleOptions.map((role) => (
                   <label key={role.value} className="inline-flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={roles.includes(role.value)}
                       onChange={() => toggleRole(role.value)}
+                      className="accent-indigo-600 dark:accent-indigo-400"
                     />
                     {role.label}
                   </label>

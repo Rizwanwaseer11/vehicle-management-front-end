@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
-import { LogOut, Bus, House, Route, Users, CircleUser, Bell, Settings } from "lucide-react";
+import { LogOut, Bus, House, Route, Users, CircleUser, Bell, Settings, ClipboardList } from "lucide-react";
 import { API_BASE } from "@/lib/apiBase";
 
 const SideNavbarEmployee = () => {
@@ -270,6 +270,15 @@ const SideNavbarEmployee = () => {
                   <span className="flex-1 ms-3 whitespace-nowrap">
                     Manage Routes
                   </span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"manage-bookings"}
+                  className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group"
+                >
+                  <ClipboardList className=" w-5 h-5 " />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
                 </Link>
               </li>
               <li>

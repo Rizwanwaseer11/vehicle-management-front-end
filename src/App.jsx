@@ -14,6 +14,7 @@ import ManageDrivers from "./pages/owner/pages/ManageDrivers";
 import ManagePassengers from "./pages/owner/pages/ManagePassengers";
 import ManageRoutes from "./pages/owner/pages/ManageRoutes";
 import ManageBuses from "./pages/owner/pages/ManageBuses";
+import ManageBookings from "./pages/owner/pages/ManageBookings";
 import Notifications from "./pages/owner/pages/Notifications";
 import NotificationCenter from "./pages/owner/pages/NotificationCenter";
 import AccountSettings from "./pages/owner/pages/AccountSettings";
@@ -66,6 +67,7 @@ function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="manage-buses" element={<ManageBuses />} />
+              <Route path="manage-bookings" element={<ManageBookings />} />
               <Route path="manage-drivers" element={<ManageDrivers />} />
               <Route path="manage-passengers" element={<ManagePassengers />} />
               <Route path="manage-routes" element={<ManageRoutes />} />
@@ -89,6 +91,7 @@ function App() {
                 element={<Dashboard isEmployeePath={true} />}
               />
               <Route path="manage-buses" element={<ManageBuses isEmployeePath={true} />} />
+              <Route path="manage-bookings" element={<ManageBookings isEmployeePath={true} />} />
               <Route path="manage-drivers" element={<ManageDrivers isEmployeePath={true} />} />
               <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={true} />} />
               <Route path="manage-routes" element={<ManageRoutes isEmployeePath={true} />} />

@@ -56,11 +56,13 @@ const NotificationCenter = () => {
 
   return (
     <div className="antialiased w-full min-h-screen bg-gray-50 dark:bg-gray-800/95 md:ml-64 pt-16 md:pt-20 px-4 md:px-6 lg:px-8 mt-4 pb-6">
-      <div className="max-w-4xl mx-auto bg-white border border-default rounded-xl p-6 shadow-sm">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-700/80 border border-default dark:border-gray-600 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-heading">Notification Center</h1>
-            <p className="text-sm text-body mt-1">
+            <h1 className="text-2xl font-semibold text-heading dark:text-gray-100">
+              Notification Center
+            </h1>
+            <p className="text-sm text-body mt-1 dark:text-gray-300">
               All system and trip updates for administrators.
             </p>
           </div>
@@ -69,7 +71,7 @@ const NotificationCenter = () => {
               markSeen();
               loadNotifications();
             }}
-            className="text-sm text-indigo-600 hover:opacity-80"
+            className="text-sm text-indigo-600 dark:text-indigo-300 hover:opacity-80"
           >
             Refresh
           </button>
@@ -77,9 +79,11 @@ const NotificationCenter = () => {
 
         <div className="mt-6">
           {loading ? (
-            <p className="text-sm text-gray-500">Loading notifications...</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">
+              Loading notifications...
+            </p>
           ) : notifications.length === 0 ? (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-300">
               No notifications available yet.
             </div>
           ) : (
@@ -87,13 +91,13 @@ const NotificationCenter = () => {
               {notifications.map((n) => (
                 <div
                   key={n._id}
-                  className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                  className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800/60"
                 >
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                       {n.title}
                     </h3>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-300">
                       {n.createdAt ? new Date(n.createdAt).toLocaleString() : ""}
                     </span>
                   </div>
