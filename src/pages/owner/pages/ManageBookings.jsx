@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,6 +59,14 @@ const ManageBookings = ({ isEmployeePath }) => {
     setAppliedFilters(cleared);
     setPage(1);
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setPage(1);
+      setAppliedFilters(filters);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [filters]);
 
   const queryKey = useMemo(
     () => ["admin-bookings", token, page, JSON.stringify(appliedFilters)],
