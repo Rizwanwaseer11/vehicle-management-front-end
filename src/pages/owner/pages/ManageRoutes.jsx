@@ -1231,14 +1231,23 @@ export default function ManageRoutes() {
           </Alert>
         )}
 
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setEditRoute(null); setServerError(""); } }}>
-          <DialogTrigger asChild>
-            <Button className="flex gap-2 shadow-sm bg-blue-600 hover:bg-blue-700 text-white" onClick={handleAddNew}>
-              <Plus size={16} /> <span className="hidden sm:inline">Add Route</span> <span className="sm:hidden">Add</span>
-            </Button>
-          </DialogTrigger>
+        <div className="flex justify-between items-center mb-2 mt-8">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              Manage Routes
+            </h2>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-300">
+              Create, edit, and manage routes
+            </p>
+          </div>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setEditRoute(null); setServerError(""); } }}>
+            <DialogTrigger asChild>
+              <Button className="px-4 py-6 flex items-center gap-2" onClick={handleAddNew}>
+                <Plus size={16} /> <span className="hidden sm:inline">Add Route</span> <span className="sm:hidden">Add</span>
+              </Button>
+            </DialogTrigger>
 
-          <DialogContent className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl flex flex-col p-0 gap-0 overflow-hidden bg-white dark:bg-gray-800 rounded-none sm:rounded-lg">
+            <DialogContent className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-3xl flex flex-col p-0 gap-0 overflow-hidden bg-white dark:bg-gray-800 rounded-none sm:rounded-lg">
             <DialogHeader className="p-4 border-b shrink-0 flex flex-col justify-between">
               <DialogTitle className="text-lg font-bold">{editRoute ? "Edit Route" : "Create New Route"}</DialogTitle>
               <DialogDescription className="text-xs text-gray-500">Enter details, set schedule, search stops, or pick on map.</DialogDescription>
@@ -1379,8 +1388,9 @@ export default function ManageRoutes() {
               <Button variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto h-11 sm:h-10">Cancel</Button>
               <Button onClick={handleCreateOrUpdate} className="w-full sm:w-auto h-11 sm:h-10 bg-green-600 hover:bg-green-700">{editRoute ? "Update Route" : "Create Route"}</Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
 
         {/* DELETE DIALOG */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

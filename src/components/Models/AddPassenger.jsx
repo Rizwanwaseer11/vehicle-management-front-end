@@ -85,7 +85,7 @@ export default function AddPassengerModal({ onCreated }) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Passenger</DialogTitle>
           </DialogHeader>

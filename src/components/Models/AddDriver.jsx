@@ -91,7 +91,7 @@ export default function AddDriverModal({ onCreated }) {
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add New Driver</DialogTitle>
             <DialogDescription>Enter driver information</DialogDescription>

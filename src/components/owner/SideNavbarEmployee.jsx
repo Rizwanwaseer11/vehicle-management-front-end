@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import { LogOut, Bus, House, Route, Users, CircleUser, Bell, Settings, ClipboardList } from "lucide-react";
 import { API_BASE } from "@/lib/apiBase";
+import oneloveLogo from "@/assets/onelove.png";
 
 const SideNavbarEmployee = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -100,10 +101,13 @@ const SideNavbarEmployee = () => {
           </button>
           <div className="flex justify-start items-center">
             <Link to={"/employee"} className="flex items-center">
-            
-              <Bus className="h-8 w-8 mr-2 text-indigo-600" />
+              <img
+                src={oneloveLogo}
+                alt="OneLoveDrive"
+                className="h-9 w-9 mr-2 rounded-full object-cover"
+              />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Tranport App
+                OneLoveDrive
               </span>
             </Link>
           </div>

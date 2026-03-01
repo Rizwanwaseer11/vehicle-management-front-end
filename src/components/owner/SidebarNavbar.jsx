@@ -4,6 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 import { API_BASE } from "@/lib/apiBase";
+import oneloveLogo from "@/assets/onelove.png";
 import {
   LogOut,
   Bus,
@@ -121,9 +122,13 @@ const SidebarNavbar = () => {
           </button>
           <div className="flex justify-start items-center">
             <Link to={"/admin"} className="flex items-center">
-              <Bus className="h-8 w-8 mr-2 text-indigo-600" />
+              <img
+                src={oneloveLogo}
+                alt="OneLoveDrive"
+                className="h-9 w-9 mr-2 rounded-full object-cover"
+              />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Island Drive
+                OneLoveDrive
               </span>
             </Link>
           </div>

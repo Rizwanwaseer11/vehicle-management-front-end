@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { API_BASE } from "@/lib/apiBase";
 
 const roleOptions = [
@@ -13,12 +14,76 @@ const Notifications = () => {
   const [body, setBody] = useState("");
   const [target, setTarget] = useState("all");
   const [roles, setRoles] = useState(["passenger"]);
-  const [userIds, setUserIds] = useState("");
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [userSearch, setUserSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [priority, setPriority] = useState("high");
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
 
   const token = useMemo(() => localStorage.getItem("token"), []);
+  const roleFilterOptions = useMemo(
+    () => [{ value: "all", label: "All Roles" }, ...roleOptions],
+    []
+  );
+
+  const fetchUsers = async ({ signal }) => {
+    const res = await fetch(`${API_BASE}/admin/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
+    if (!res.ok) {
+      throw new Error("Failed to load users");
+    }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  };
+
+  const usersQuery = useQuery({
+    queryKey: ["admin-users", token],
+    queryFn: fetchUsers,
+    enabled: !!token,
+  });
+
+  const users = useMemo(
+    () => (Array.isArray(usersQuery.data) ? usersQuery.data : []),
+    [usersQuery.data]
+  );
+
+  const filteredUsers = useMemo(() => {
+    const search = userSearch.trim().toLowerCase();
+    return users.filter((user) => {
+      if (roleFilter !== "all" && user.role !== roleFilter) return false;
+      if (!search) return true;
+      const haystack = [
+        user.name,
+        user.email,
+        user.phone,
+        user._id,
+        user.role,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(search);
+    });
+  }, [users, userSearch, roleFilter]);
+
+  const toggleUser = (id) => {
+    setSelectedUserIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const selectAllVisible = () => {
+    const ids = filteredUsers.map((user) => user._id);
+    setSelectedUserIds((prev) => Array.from(new Set([...prev, ...ids])));
+  };
+
+  const clearSelection = () => setSelectedUserIds([]);
 
   const toggleRole = (value) => {
     setRoles((prev) =>
@@ -46,15 +111,15 @@ const Notifications = () => {
     } else if (target === "roles") {
       payload.roles = roles;
     } else if (target === "users") {
-      const receivers = userIds
-        .split(",")
-        .map((id) => id.trim())
-        .filter(Boolean);
-      payload.receivers = receivers;
+      payload.receivers = selectedUserIds;
     }
 
     if (!payload.title || !payload.body) {
       setStatus({ type: "error", message: "Title and message are required." });
+      return;
+    }
+    if (target === "users" && selectedUserIds.length === 0) {
+      setStatus({ type: "error", message: "Select at least one user." });
       return;
     }
 
@@ -75,7 +140,9 @@ const Notifications = () => {
       setStatus({ type: "success", message: "Notification sent successfully." });
       setTitle("");
       setBody("");
-      setUserIds("");
+      setSelectedUserIds([]);
+      setUserSearch("");
+      setRoleFilter("all");
     } catch (err) {
       setStatus({ type: "error", message: err.message });
     } finally {
@@ -156,16 +223,100 @@ const Notifications = () => {
           )}
 
           {target === "users" && (
-            <div>
-              <label className="block text-sm font-medium text-heading dark:text-gray-200 mb-1">
-                User IDs (comma separated)
-              </label>
-              <input
-                value={userIds}
-                onChange={(e) => setUserIds(e.target.value)}
-                className="w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-gray-100"
-                placeholder="64f..., 64f..."
-              />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-heading dark:text-gray-200">
+                  Select Users
+                </label>
+                <span className="text-xs text-gray-500 dark:text-gray-300">
+                  {selectedUserIds.length} selected
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="md:col-span-2 w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-gray-100"
+                  placeholder="Search by name, email, role, or ID"
+                />
+                <select
+                  value={roleFilter}
+                  onChange={(e) => setRoleFilter(e.target.value)}
+                  className="w-full border border-default dark:border-gray-600 rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:text-gray-100"
+                >
+                  {roleFilterOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-wrap gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={selectAllVisible}
+                  className="px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  Select all visible
+                </button>
+                <button
+                  type="button"
+                  onClick={clearSelection}
+                  className="px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  Clear selection
+                </button>
+              </div>
+
+              <div className="border border-default dark:border-gray-600 rounded-lg max-h-64 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                {usersQuery.isLoading ? (
+                  <div className="p-3 text-sm text-gray-500 dark:text-gray-300">
+                    Loading users...
+                  </div>
+                ) : filteredUsers.length === 0 ? (
+                  <div className="p-3 text-sm text-gray-500 dark:text-gray-300">
+                    No users match your filters.
+                  </div>
+                ) : (
+                  filteredUsers.map((user) => {
+                    const isSelected = selectedUserIds.includes(user._id);
+                    return (
+                      <label
+                        key={user._id}
+                        className="flex items-start gap-3 p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleUser(user._id)}
+                          className="mt-1 accent-indigo-600 dark:accent-indigo-400"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {user.name || "Unnamed"}
+                            </span>
+                            <span className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded px-2 py-0.5">
+                              {user.role || "user"}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-300 truncate">
+                            {user.email || "No email"} {user.phone ? `• ${user.phone}` : ""}
+                          </div>
+                          <div className="text-[11px] text-gray-400 dark:text-gray-400">
+                            ID: {user._id}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })
+                )}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-300">
+                Tip: use search or role filter to find users, then select multiple recipients.
+              </p>
             </div>
           )}
 
