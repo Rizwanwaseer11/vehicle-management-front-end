@@ -21,7 +21,7 @@ const API = {
 
 const Dashboard = ({ isEmployeePath }) => {
   return (
-    <main className="antialiased p-10 w-full h-full bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-20">
+    <main className="antialiased p-10 w-full min-h-screen bg-gray-200 dark:bg-gray-800/95 md:ml-64 pt-20">
       <div className="mt-8 mb-6">
         <PageTitle>Dashboard</PageTitle>
         <p className="text-sm font-light dark:text-gray-300 text-gray-600">
@@ -29,7 +29,7 @@ const Dashboard = ({ isEmployeePath }) => {
         </p>
       </div>
 
-      <DashboardCards isEmployeePath={isEmployeePath} />
+      <DashboardCards />
       <Cards isEmployeePath={isEmployeePath} />
     </main>
   );
@@ -37,7 +37,7 @@ const Dashboard = ({ isEmployeePath }) => {
 
 export default Dashboard;
 
-const DashboardCards = ({ isEmployeePath }) => {
+const DashboardCards = () => {
   /** ===============================
    * TOKEN (ADDED)
    * =============================== */

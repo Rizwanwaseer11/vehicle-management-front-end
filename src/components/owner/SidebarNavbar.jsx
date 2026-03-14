@@ -12,6 +12,7 @@ import {
   Route,
   Users,
   CircleUser,
+  UserCog,
   MapPinCheckInside,
   Bell,
   Settings,
@@ -20,7 +21,6 @@ import {
 
 const SidebarNavbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -58,7 +58,7 @@ const SidebarNavbar = () => {
           ? list.filter((n) => n.createdAt && new Date(n.createdAt) > lastSeen).length
           : list.length;
         setUnreadCount(unread);
-      } catch (e) {
+      } catch {
         setNotifications([]);
         setUnreadCount(0);
       }
@@ -287,6 +287,19 @@ const SidebarNavbar = () => {
               </li>
               <li>
                 <NavLink
+                  to={"manage-employees"}
+                  className={({ isActive }) =>
+                    `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
+                      isActive ? " text-indigo-600 font-semibold" : ""
+                    }`
+                  }
+                >
+                  <UserCog className=" w-5 h-5 " />
+                  <span className="flex-1 ms-3 whitespace-nowrap">Employees</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
                   to={"manage-buses"}
                   className={({ isActive }) =>
                     `flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group transition-colors ${
@@ -394,58 +407,23 @@ const SidebarNavbar = () => {
               </li>
             </ul>
             <ul className="space-y-4 font-medium border-t-2 border-gray-300 pt-6 mt-4">
-              <li>
+              {/* <li>
                 <a
                   href="#"
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group"
                 >
-                  {/* <svg
-                    className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"
-                    />
-                  </svg> */}
-                  {/* <span className="flex-1 ms-3 whitespace-nowrap"> */}
-                  {/* Documentation */}
-                  {/* </span> */}
+                  
+                  
                 </a>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <a
                   href="#"
                   className="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group"
                 >
-                  {/* <svg
-                    className="shrink-0 w-5 h-5 transition duration-75 group-hover:text-fg-brand"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="m13.46 8.291 3.849-3.849a1.5 1.5 0 0 1 2.122 0l.127.127a1.5 1.5 0 0 1 0 2.122l-3.84 3.838a4 4 0 0 0-2.258-2.238Zm0 0a4 4 0 0 1 2.263 2.238l3.662-3.662a8.961 8.961 0 0 1 0 10.27l-3.676-3.676m-2.25-5.17 3.678-3.676a8.961 8.961 0 0 0-10.27 0l3.662 3.662a4 4 0 0 0-2.238 2.258L4.615 6.863a8.96 8.96 0 0 0 0 10.27l3.662-3.662a4 4 0 0 0 2.258 2.238l-3.672 3.676a8.96 8.96 0 0 0 10.27 0l-3.662-3.662a4.001 4.001 0 0 0 2.238-2.262m0 0 3.849 3.848a1.5 1.5 0 0 1 0 2.122l-.127.126a1.499 1.499 0 0 1-2.122 0l-3.838-3.838a4 4 0 0 0 2.238-2.258Zm.29-1.461a4 4 0 1 1-8 0 4 4 0 0 1 8 0Zm-7.718 1.471-3.84 3.838a1.5 1.5 0 0 0 0 2.122l.128.126a1.5 1.5 0 0 0 2.122 0l3.848-3.848a4 4 0 0 1-2.258-2.238Zm2.248-5.19L6.69 4.442a1.5 1.5 0 0 0-2.122 0l-.127.127a1.5 1.5 0 0 0 0 2.122l3.849 3.848a4 4 0 0 1 2.238-2.258Z"
-                    />
-                  </svg> */}
-                  {/* <span className="flex-1 ms-3 whitespace-nowrap">Support</span> */}
+                 
                 </a>
-              </li>
+              </li> */}
               <li>
                 <div className="flex items-center  px-2 py-1.5 text-body rounded-base hover:bg-gray-200 hover:text-fg-brand group">
                   <LogOut className="text-red-600 " />

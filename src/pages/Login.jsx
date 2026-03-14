@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE } from "@/lib/apiBase";
 
 export const Login = () => {
-  const [state, setState] = React.useState("login");
   const navigate = useNavigate();
 
   const [formData, setFormData] = React.useState({
@@ -44,7 +43,8 @@ export const Login = () => {
       roomNumber,
       jobSite,
       homeAddress,
-      licenseNumber
+      licenseNumber,
+      pagePermissions
     } = data;
 
     if (!token) {
@@ -68,7 +68,8 @@ export const Login = () => {
       roomNumber,
       jobSite,
       homeAddress,
-      licenseNumber
+      licenseNumber,
+      pagePermissions
     };
 
     // ✅ STORE AUTH DATA
@@ -83,7 +84,7 @@ export const Login = () => {
     }
     // navigate("/admin", { replace: true });
 
-  } catch (err) {
+  } catch {
     setError("Server error. Please try again later.");
   }
 };
@@ -104,7 +105,7 @@ export const Login = () => {
       >
         <h1 className="flex text-gray-600 justify-center mr-6 text-3xl mt-10 font-medium">
           <Bus className="h-10 w-10 mr-2 text-indigo-600" />
-          {state === "login" ? "Login" : "Sign up"}
+          Login
         </h1>
 
         <p className="text-gray-500 text-sm mt-2">Please sign in to continue</p>
@@ -159,7 +160,7 @@ export const Login = () => {
           type="submit"
           className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity"
         >
-          {state === "login" ? "Login" : "Sign up"}
+          Login
         </button>
 
         <p className="text-gray-500 text-sm mt-3 mb-11 cursor-pointer">

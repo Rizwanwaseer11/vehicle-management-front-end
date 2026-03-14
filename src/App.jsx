@@ -18,26 +18,24 @@ import ManageBookings from "./pages/owner/pages/ManageBookings";
 import Notifications from "./pages/owner/pages/Notifications";
 import NotificationCenter from "./pages/owner/pages/NotificationCenter";
 import AccountSettings from "./pages/owner/pages/AccountSettings";
+import ManageEmployees from "./pages/owner/pages/ManageEmployees";
 import { Login } from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import LayoutEmp from "./pages/Employee/LayoutEmp";
 import LiveTracking from "./pages/owner/pages/LiveTracking";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { EmployeePermissionRoute } from "./components/EmployeePermissionRoute";
+import { EMPLOYEE_PERMISSION_KEYS } from "./lib/employeePermissions";
 
 function App() {
   //navbars locations
-  // const isAdminPath = useLocation().pathname.startsWith("/admin");
-  const isEmployeePath = useLocation().pathname.startsWith("/employee");
-  const isAdminPath =
-    useLocation().pathname.startsWith("/admin") ||
-    useLocation().pathname === "/login";
   const location = useLocation().pathname;
   const isHiddenPath =
     location.startsWith("/admin") ||
     location === "/login" ||
     location.startsWith("/employee");
 
-  const [showLogin, setShowLogin] = useState(false);
+  const [_showLogin, setShowLogin] = useState(false);
 
   return (
     <>
@@ -70,6 +68,7 @@ function App() {
               <Route path="manage-bookings" element={<ManageBookings />} />
               <Route path="manage-drivers" element={<ManageDrivers />} />
               <Route path="manage-passengers" element={<ManagePassengers />} />
+              <Route path="manage-employees" element={<ManageEmployees />} />
               <Route path="manage-routes" element={<ManageRoutes />} />
               <Route path="manage-tracking" element={<LiveTracking />} />
               <Route path="push-notifications" element={<Notifications />} />
@@ -88,16 +87,76 @@ function App() {
             >
               <Route
                 index
-                element={<Dashboard isEmployeePath={true} />}
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.DASHBOARD}>
+                    <Dashboard isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
               />
-              <Route path="manage-buses" element={<ManageBuses isEmployeePath={true} />} />
-              <Route path="manage-bookings" element={<ManageBookings isEmployeePath={true} />} />
-              <Route path="manage-drivers" element={<ManageDrivers isEmployeePath={true} />} />
-              <Route path="manage-passengers" element={<ManagePassengers isEmployeePath={true} />} />
-              <Route path="manage-routes" element={<ManageRoutes isEmployeePath={true} />} />
-              <Route path="push-notifications" element={<Notifications />} />
-              <Route path="notification-center" element={<NotificationCenter />} />
-              <Route path="account-settings" element={<AccountSettings />} />
+              <Route
+                path="manage-buses"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.MANAGE_BUSES}>
+                    <ManageBuses isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="manage-bookings"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.MANAGE_BOOKINGS}>
+                    <ManageBookings isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="manage-drivers"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.MANAGE_DRIVERS}>
+                    <ManageDrivers isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="manage-passengers"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.MANAGE_PASSENGERS}>
+                    <ManagePassengers isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="manage-routes"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.MANAGE_ROUTES}>
+                    <ManageRoutes isEmployeePath={true} />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="push-notifications"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.PUSH_NOTIFICATIONS}>
+                    <Notifications />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="notification-center"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.NOTIFICATION_CENTER}>
+                    <NotificationCenter />
+                  </EmployeePermissionRoute>
+                }
+              />
+              <Route
+                path="account-settings"
+                element={
+                  <EmployeePermissionRoute permissionKey={EMPLOYEE_PERMISSION_KEYS.ACCOUNT_SETTINGS}>
+                    <AccountSettings />
+                  </EmployeePermissionRoute>
+                }
+              />
             </Route>
           </Routes>  
         </div>
